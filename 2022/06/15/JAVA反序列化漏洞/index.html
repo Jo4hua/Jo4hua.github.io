@@ -10,6 +10,14 @@
 
     <!--Description-->
     
+        <meta name="description" content="JAVA反序列化与ObjectInputStream关于ObjectOutputStream：
+
+ObjectOutputStream:对象的序列化流，作用：把对象转成字节数据的输出到文件中保存，对象的输出过程称为序列化，可实现对象的持久存储。
+
+关于ObjectInputStream：
+
+Obje">
+    
 
     <!--Author-->
     
@@ -18,7 +26,7 @@
 
     <!--Open Graph Title-->
     
-        <meta property="og:title" content="Don_Joshua&#39;s Blog"/>
+        <meta property="og:title" content="JAVA反序列化漏洞浅析"/>
     
 
     <!--Open Graph Description-->
@@ -29,7 +37,7 @@
 
     <!--Type page-->
     
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content="article" />
     
 
     <!--Page Cover-->
@@ -43,7 +51,7 @@
 
     <!-- Title -->
     
-    <title>Archives: 2022 - Don_Joshua&#39;s Blog</title>
+    <title>JAVA反序列化漏洞浅析 - Don_Joshua&#39;s Blog</title>
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
@@ -108,9 +116,7 @@
 <div class="container">
 
     <!-- Main Content -->
-    
-
-<div class="row">
+    <div class="row">
     <div class="col-sm-12">
 
         <!--Title and Logo-->
@@ -118,43 +124,71 @@
     <div class="logo">
         <a href="/"><i class="logo-icon fa fa-eye" aria-hidden="true"></i></a>
         
-            <h1 id="main-title" class="title">2022</h1>
-        
     </div>
 </header>
 
-        <section class="main archive-container">
+        <section class="main">
             
-                <div class="archive-post">
-    <a href="/2022/06/15/JAVA%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">
-        <span class="archive-date">
-            Jun 2022
-        </span>
-        JAVA反序列化漏洞浅析
-    </a>
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2022/06/15/JAVA%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">
+                JAVA反序列化漏洞浅析
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2022-06-15</span>
+            
+            
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <h4 id="JAVA反序列化与ObjectInputStream"><a href="#JAVA反序列化与ObjectInputStream" class="headerlink" title="JAVA反序列化与ObjectInputStream"></a>JAVA反序列化与ObjectInputStream</h4><p>关于ObjectOutputStream：</p>
+<blockquote>
+<p>ObjectOutputStream:对象的<strong>序列化流</strong>，作用：把对象转成字节数据的输出到文件中保存，对象的输出过程称为<strong>序列化</strong>，可实现对象的持久存储。</p>
+</blockquote>
+<p>关于ObjectInputStream：</p>
+<blockquote>
+<p>ObjectInputStream <strong>反序列化流</strong>，将之前使用 ObjectOutputStream 序列化的原始数据恢复为对象，以流的方式读取对象。 </p>
+</blockquote>
+<p>在JAVA中，利用ObjectinputStream的readObject方法进行对象读取时，如果，目标对象已经重写了readObject方法，那么此时就会执行已经被重写的readObject如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建一个MyObj类，此时MyObj类需要继承Serializable才能进行序列化和反序列化</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyObj</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(java.io.ObjectInputStream in)</span> <span class="keyword">throws</span> Exception, IOException &#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		in.defaultReadObject();</span><br><span class="line">		Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);<span class="comment">//执行calc命令</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">		<span class="built_in">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main方法，将新的MyObj对象序列化后写入object文件，之后反序列化后再读取出来</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">		MyObj o=<span class="keyword">new</span> <span class="title class_">MyObj</span>();</span><br><span class="line">		o.setName(<span class="string">&quot;haha wocao&quot;</span>);</span><br><span class="line">		FileOutputStream fos=<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;object&quot;</span>);</span><br><span class="line">		ObjectOutputStream os=<span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(fos);</span><br><span class="line">		os.writeObject(o);</span><br><span class="line">		os.close();</span><br><span class="line">		FileInputStream fis=<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;object&quot;</span>);</span><br><span class="line">		ObjectInputStream ois=<span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(fis);</span><br><span class="line">		MyObj o1=(MyObj) ois.readObject();</span><br><span class="line">		System.out.println(o1.getName());</span><br><span class="line">		ois.close();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>点击运行后，发现输出了“haha wocao”并执行了calc命令</p>
+<p><img src="C:\Users\29471\AppData\Roaming\Typora\typora-user-images\image-20220615135821249.png" alt="image-20220615135821249"></p>
+<p>可见在反序列化时，可能会给恶意代码提供可乘之机<br>如果反序列化执行的是恶意构造的字节序列，那么漏洞就产生了</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/漏洞原理/">#漏洞原理</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
 </div>
-            
-                <div class="archive-post">
-    <a href="/2022/06/14/hello-world/">
-        <span class="archive-date">
-            Jun 2022
-        </span>
-        Hello World
-    </a>
-</div>
-            
-                <div class="archive-post">
-    <a href="/2022/06/14/shiro%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">
-        <span class="archive-date">
-            Jun 2022
-        </span>
-        shiro漏洞复现
-    </a>
-</div>
-            
         </section>
+
     </div>
 </div>
+
 
 </div>
 
