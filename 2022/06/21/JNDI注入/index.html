@@ -10,6 +10,10 @@
 
     <!--Description-->
     
+        <meta name="description" content="关于RMI远程方法调用（Remote Method Invocation）RMI需要将行为的实现与行为的调用分别定义，并将其放在不同的JVM上
+在RMI中远程服务被定义在了继承了Remote接口中，远程服务的代码被存放在了实现该定义的类中
+12public interface IService ex">
+    
 
     <!--Author-->
     
@@ -18,7 +22,7 @@
 
     <!--Open Graph Title-->
     
-        <meta property="og:title" content="Don_Joshua&#39;s Blog"/>
+        <meta property="og:title" content="JNDI注入"/>
     
 
     <!--Open Graph Description-->
@@ -29,7 +33,7 @@
 
     <!--Type page-->
     
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content="article" />
     
 
     <!--Page Cover-->
@@ -43,7 +47,7 @@
 
     <!-- Title -->
     
-    <title>Don_Joshua&#39;s Blog</title>
+    <title>JNDI注入 - Don_Joshua&#39;s Blog</title>
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
@@ -122,17 +126,14 @@
     <div class="logo">
         <a href="/"><i class="logo-icon fa fa-eye" aria-hidden="true"></i></a>
         
-            <h1 id="main-title" class="title">Don_Joshua's Blog</h1>
-        
     </div>
 </header>
 
         <section class="main">
             
-                
 <div class="post">
 
-    <div class="post-header index">
+    <div class="post-header">
         <h1 class="title">
             <a href="/2022/06/21/JNDI%E6%B3%A8%E5%85%A5/">
                 JNDI注入
@@ -147,9 +148,13 @@
         </div>
     </div>
 
-    
-        <div class="content">
-            <h4 id="关于RMI远程方法调用（Remote-Method-Invocation）"><a href="#关于RMI远程方法调用（Remote-Method-Invocation）" class="headerlink" title="关于RMI远程方法调用（Remote Method Invocation）"></a>关于RMI远程方法调用（Remote Method Invocation）</h4><p>RMI需要将行为的实现与行为的调用分别定义，并将其放在不同的JVM上</p>
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <h4 id="关于RMI远程方法调用（Remote-Method-Invocation）"><a href="#关于RMI远程方法调用（Remote-Method-Invocation）" class="headerlink" title="关于RMI远程方法调用（Remote Method Invocation）"></a>关于RMI远程方法调用（Remote Method Invocation）</h4><p>RMI需要将行为的实现与行为的调用分别定义，并将其放在不同的JVM上</p>
 <p>在RMI中远程服务被定义在了继承了Remote接口中，远程服务的代码被存放在了实现该定义的类中</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">IService</span> <span class="keyword">extends</span> <span class="title class_">Remote</span> <span class="comment">//继承了Remote的接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ServiceImple</span> <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title class_">IService</span> <span class="comment">//实现类</span></span><br></pre></td></tr></table></figure>
 
@@ -182,144 +187,25 @@
 <p>![](..\img\屏幕截图 2022-06-21 122333.png)</p>
 <h4 id="JNDI的学习"><a href="#JNDI的学习" class="headerlink" title="JNDI的学习"></a>JNDI的学习</h4><p>名称：JAVA NAMING DIRECTORY INTERFACE java命名和目录接口</p>
 
-        </div>
-    
-
-</div>
-            
-                
-<div class="post">
-
-    <div class="post-header index">
-        <h1 class="title">
-            <a href="/2022/06/16/%E5%86%85%E5%AD%98%E9%A9%AC%E5%AD%A6%E4%B9%A0/">
-                内存马学习
-            </a>
-        </h1>
-        <div class="post-info">
-            
-                <span class="date">2022-06-16</span>
-            
-            
-            
-        </div>
     </div>
 
     
-        <div class="content">
-            <h4 id="Java反射"><a href="#Java反射" class="headerlink" title="Java反射"></a>Java反射</h4><p>正常类的加载过程：(以Student类为例)</p>
-<blockquote>
-<p>1.当执行new Student()时，会触发JVM加载Student.class文件<br>2.JVM从本地磁盘找到Sudent.class文件并加载到JVM内存中<br>3.class文件加载后，JVM会自动创建一个class对象，一个类只能产生一个class对象</p>
-</blockquote>
-<p>Java反射的本质：</p>
-<blockquote>
-<p>在内存中得到class对象，反向获取Student对象的信息</p>
-</blockquote>
-<p>Java反射的步骤：</p>
-<blockquote>
-<ul>
-<li>获取目标类型的Class对象</li>
-<li>通过 Class 对象分别获取Constructor类对象、Method类对象 &amp; Field 类对象</li>
-<li>通过 Constructor类对象、Method类对象 &amp; Field类对象分别获取类的构造函数、方法&amp;属性的具体信息，并进行后续操作</li>
-</ul>
-</blockquote>
-<h4 id="Java-Instrumentation"><a href="#Java-Instrumentation" class="headerlink" title="Java Instrumentation"></a>Java Instrumentation</h4><blockquote>
-<p>Instrumentation是Java提供的一个来自JVM的接口，该接口提供了一系列查看和操作Java类定义的方法，例如修改类的字节码、向classLoader的classpath下加入jar文件等，使得开发者可以通过Java语言来操作和监控JVM内部的一些状态，进而实现Java程序的监控分析，甚至实现一些特殊功能（如AOP、热部署）</p>
-</blockquote>
-<blockquote>
-<p>Java agent 通过Instrumentation API与JVM交互</p>
-</blockquote>
-<p>在注入<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%86%85%E5%AD%98&spm=1001.2101.3001.7020">内存</a>马的过程中，我们可以利用java Instrumentation机制，动态的修改已加载到内存中的类里的方法，进而注入恶意的代码</p>
-<h4 id="内存马类型"><a href="#内存马类型" class="headerlink" title="内存马类型"></a>内存马类型</h4><ul>
-<li>servlet-api类：filter型、servlet型、listener型</li>
-<li>spring类：interceptor型、controller型</li>
-<li>Java Instrumentation类：agent型</li>
-</ul>
-<h4 id="内存马简介"><a href="#内存马简介" class="headerlink" title="内存马简介"></a>内存马简介</h4><p><strong>目标</strong>：访问url或指定url，带上命令执行参数，即可让服务器返回执行结果</p>
-<p><strong>实现</strong>：以java为例，客户端发起的web请求会依次经过Listener、Filter、Servlet三个组件，我们只要在这个请求的过程中做手脚，在内存中修改已有的组件或者动态注册一个新的组件，插入恶意的shellcode，就可以达到我们的目的</p>
-<h4 id="内存码原理与实现："><a href="#内存码原理与实现：" class="headerlink" title="内存码原理与实现："></a>内存码原理与实现：</h4><p>实现：</p>
-<p>servlet型：创建一个恶意的servlet，获取当前的standardcontext，将恶意servlet封装成wapper添加到StandardContext的child中，添加servletMapping将访问的URL和wapper进行绑定</p>
 
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/漏洞原理/">#漏洞原理</a>
         </div>
+    
+
+    <!-- Comments -->
     
 
 </div>
-            
-                
-<div class="post">
-
-    <div class="post-header index">
-        <h1 class="title">
-            <a href="/2022/06/15/JAVA%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">
-                JAVA反序列化漏洞浅析
-            </a>
-        </h1>
-        <div class="post-info">
-            
-                <span class="date">2022-06-15</span>
-            
-            
-            
-        </div>
-    </div>
-
-    
-        <div class="content">
-            <h4 id="JAVA反序列化与ObjectInputStream"><a href="#JAVA反序列化与ObjectInputStream" class="headerlink" title="JAVA反序列化与ObjectInputStream"></a>JAVA反序列化与ObjectInputStream</h4><p>关于ObjectOutputStream：</p>
-<blockquote>
-<p>ObjectOutputStream:对象的<strong>序列化流</strong>，作用：把对象转成字节数据的输出到文件中保存，对象的输出过程称为<strong>序列化</strong>，可实现对象的持久存储。</p>
-</blockquote>
-<p>关于ObjectInputStream：</p>
-<blockquote>
-<p>ObjectInputStream <strong>反序列化流</strong>，将之前使用 ObjectOutputStream 序列化的原始数据恢复为对象，以流的方式读取对象。 </p>
-</blockquote>
-<p>在JAVA中，利用ObjectinputStream的readObject方法进行对象读取时，如果，目标对象已经重写了readObject方法，那么此时就会执行已经被重写的readObject如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建一个MyObj类，此时MyObj类需要继承Serializable才能进行序列化和反序列化</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyObj</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(java.io.ObjectInputStream in)</span> <span class="keyword">throws</span> Exception, IOException &#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		in.defaultReadObject();</span><br><span class="line">		Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);<span class="comment">//执行calc命令</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">		<span class="built_in">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main方法，将新的MyObj对象序列化后写入object文件，之后反序列化后再读取出来</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">		MyObj o=<span class="keyword">new</span> <span class="title class_">MyObj</span>();</span><br><span class="line">		o.setName(<span class="string">&quot;haha wocao&quot;</span>);</span><br><span class="line">		FileOutputStream fos=<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;object&quot;</span>);</span><br><span class="line">		ObjectOutputStream os=<span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(fos);</span><br><span class="line">		os.writeObject(o);</span><br><span class="line">		os.close();</span><br><span class="line">		FileInputStream fis=<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;object&quot;</span>);</span><br><span class="line">		ObjectInputStream ois=<span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(fis);</span><br><span class="line">		MyObj o1=(MyObj) ois.readObject();</span><br><span class="line">		System.out.println(o1.getName());</span><br><span class="line">		ois.close();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-
-<p>点击运行后，发现输出了“haha wocao”并执行了calc命令</p>
-<p>![](..\img\2022-06-15 154047.png)</p>
-<p>可见在反序列化时，可能会给恶意代码提供可乘之机<br>如果反序列化执行的是恶意构造的字节序列，那么漏洞就产生了</p>
-
-        </div>
-    
-
-</div>
-            
-                
-<div class="post">
-
-    <div class="post-header index">
-        <h1 class="title">
-            <a href="/2022/06/14/shiro%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">
-                shiro漏洞复现
-            </a>
-        </h1>
-        <div class="post-info">
-            
-                <span class="date">2022-06-14</span>
-            
-            
-            
-        </div>
-    </div>
-
-    
-        <div class="content">
-            
-        </div>
-    
-
-</div>
-            
         </section>
+
     </div>
 </div>
-
-
-
-
 
 
 </div>
