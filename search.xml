@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>redis安装</title>
+      <link href="/2023/05/31/redis%E5%AE%89%E8%A3%85/"/>
+      <url>/2023/05/31/redis%E5%AE%89%E8%A3%85/</url>
+      
+        <content type="html"><![CDATA[<p>最近想着复现一下redis系列的漏洞，自己先搭建个环境</p><p>我们来安装4.08版本</p><h2 id="redis-4-0-8的安装"><a href="#redis-4-0-8的安装" class="headerlink" title="redis-4.0.8的安装"></a>redis-4.0.8的安装</h2><p>下载地址：<a href="http://download.redis.io/releases/redis-4.0.8.tar.gz">http://download.redis.io/releases/redis-4.0.8.tar.gz</a></p><p>我们安装到我们的kali虚拟机上</p><p>使用命令<code>wget http://download.redis.io/releases/redis-4.0.8.tar.gz</code></p><p><img src="image-20230531185445705.png" alt="image-20230531185445705"></p><p>解压下载的redis-4.0.8.tar.gz文件，使用命令 <code>tar xvf redis-4.0.8.tar.gz</code></p><p><img src="image-20230531185608575.png" alt="image-20230531185608575"></p><p>进入解压文件夹redis-4.0.8，使用命令<code>make</code>编译可执行文件</p><p><img src="image-20230531185923394.png" alt="image-20230531185923394"></p><p>之后在此文件夹中使用命令 <code>redis-server redis.conf</code>来启动服务，如下图，默认端口为6379</p><p><img src="image-20230531221728358.png" alt="image-20230531221728358"></p><p>可以使用<code>ps -ef|grep redis</code>来查看redis服务是否开启</p><p><img src="image-20230531222119558.png" alt="image-20230531222119558"></p><h2 id="redis后台启动"><a href="#redis后台启动" class="headerlink" title="redis后台启动"></a>redis后台启动</h2><p>当然此时，redis服务是在前台运行，需要一直”挂着“才行，这里可以修改配置文件<code>redis.conf</code>，改为后端启动,将<code>daemonize no</code></p><p>改为<code>daemonize yes</code></p><p><img src="image-20230531222817197.png" alt="image-20230531222817197"></p><p>再次使用<code>redis-server redis.conf</code>命令启动</p><p><img src="image-20230531223214020.png" alt="image-20230531223214020"></p><p>使用<code>ps -aux|grep redis</code>查看是否启动成功，启动成功！</p><p><img src="image-20230531223306622.png" alt="image-20230531223306622"></p><p>redis自带客户端连接，使用命令 <code>redis-cli -h localhost -p 6379</code>来连接</p><p><img src="image-20230531223918025.png" alt="image-20230531223918025"></p><p>此时可以使用<code>shutdown</code>命令将服务关闭</p><p><img src="image-20230531224213179.png" alt="image-20230531224213179"></p><p>可以看到此时服务已经关闭。也可以使用关闭进程的方式关闭服务，使用<code>kill -9 [pid]</code>命令终结进程</p><p><img src="image-20230531224334207.png" alt="image-20230531224334207"></p><p>当然，此时是本地连接，自己连接自己，因为默认redis时只能本地连接的，所以下面我们来开启远程连接</p><h2 id="redis开启远程连接"><a href="#redis开启远程连接" class="headerlink" title="redis开启远程连接"></a>redis开启远程连接</h2><p>首先是使用ip连接，先查看ip地址<code>ifconfig</code></p><p><img src="image-20230531230542963.png" alt="image-20230531230542963"></p><p>依然是修改配置文件，<code>nano redis.conf</code>,将 <code>bind 127.0.0.1</code>改为<code>bind 192.168.31.135</code></p><p><img src="image-20230531230609044.png" alt="image-20230531230609044"></p><p>保存后重启redis服务（关闭+打开）,发现此时已经可以使用IP进行连接了</p><p><img src="image-20230531230711456.png" alt="image-20230531230711456"></p><p>此时要想让局域网内的其他主机连接，还需要将保护模式关闭，将<code>protected-mode yes</code>改为<code>protected-mode no</code> </p><p><img src="image-20230531224635071.png" alt="image-20230531224635071"></p><p>重启服务，此时通过另一台kali连接，连接成功</p><p><img src="image-20230531231050187.png" alt="image-20230531231050187"></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> redis系列 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>墨者在线靶场-SQL注入漏洞测试(参数加密)</title>
       <link href="/2023/05/29/%E5%A2%A8%E8%80%85%E5%9C%A8%E7%BA%BF%E9%9D%B6%E5%9C%BA-%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8A%A0%E5%AF%86%E5%AE%9E%E8%AE%ADAES/"/>
       <url>/2023/05/29/%E5%A2%A8%E8%80%85%E5%9C%A8%E7%BA%BF%E9%9D%B6%E5%9C%BA-%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8A%A0%E5%AF%86%E5%AE%9E%E8%AE%ADAES/</url>
@@ -349,6 +368,17 @@
     
     
     <entry>
+      <title>关于我</title>
+      <link href="/about/index.html"/>
+      <url>/about/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>分类</title>
       <link href="/categories/index.html"/>
       <url>/categories/index.html</url>
@@ -360,9 +390,9 @@
     
     
     <entry>
-      <title>关于我</title>
-      <link href="/about/index.html"/>
-      <url>/about/index.html</url>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -385,17 +415,6 @@
       <title>我的豆瓣</title>
       <link href="/movies/index.html"/>
       <url>/movies/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
